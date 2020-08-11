@@ -8,10 +8,40 @@
 #include <vector>
 #include <sstream>
 
+/*
+ * auxiliary functions
+ */
+
+std::string remove_comments(std::string line) {
+        size_t found = line.find("//"); 
+        line = line.substr(0, found);
+        line.erase(std::remove_if(line.begin(), line.end(), 
+                    ::isspace), line.end());
+        return line;
+}
+
+std::string remove_labels(std::string line) {
+    // remember that the comments and whitespace have
+    // already been removed, so we only need to check the
+    // first character of line for "(" and that will be label
+
+    if(line[0] == '(')
+        return "";
+    return line;
+}
+
+bool is_number(const std::string& s) {
+    return !s.empty() 
+        && s.find_first_not_of("0123456789") == std::string::npos;
+}
+
 void populate_maps(std::unordered_map<std::string,std::string> &comp_map,
         std::unordered_map<std::string,std::string> &dest_map,
         std::unordered_map<std::string,std::string> &jump_map) {
 
+    // dest=comp;jump
+    // comp is required, rest are optional
+    
     // a=0
     comp_map["0"] =   "0101010";
     comp_map["1"] =   "0111111";
@@ -63,6 +93,11 @@ void populate_maps(std::unordered_map<std::string,std::string> &comp_map,
     jump_map["JMP"] = "111";
 }
 
+/*
+ * generate symbol table and later use it to convert 
+ * symbols in A instructions on the fly in asm2machine
+ */
+
 void generate_symbol_table(std::vector<std::string> &file_contents, 
         std::unordered_map<std::string,std::string> &symbol_table) {
 
@@ -85,24 +120,87 @@ void generate_symbol_table(std::vector<std::string> &file_contents,
     symbol_table["R15"] = "15";
     symbol_table["SCREEN"] = "16384";
     symbol_table["KBD"] = "24576";
-    symbol_table["SP"] = 0;
-    symbol_table["LCL"] = 1;
-    symbol_table["ARG"] = 2;
-    symbol_table["THIS"] = 3;
-    symbol_table["THAT"] = 4;
+    symbol_table["SP"] = "0";
+    symbol_table["LCL"] = "1";
+    symbol_table["ARG"] = "2";
+    symbol_table["THIS"] = "3";
+    symbol_table["THAT"] = "4";
 
     // 2. label symbols
     //       - read the file
     //       - whenever encounter (label)
     //       - store <label,ln>
 
+    int line_counter = 0;
+    for(std::string line: file_contents) {
+
+        //std::cout << line_counter << "\t" << line << std::endl;
+
+        line = remove_comments(line);
+        if(line != "") {
+
+            line_counter++;
+
+            int left = line.find("(");
+            int right = line.find_last_of(")");
+
+            std::string label;
+
+            // if a valid label exists
+            if(left != std::string::npos && right != std::string::npos) {
+                // extract name from brackets
+                label = line.substr(left+1, right-left-1);
+
+                // since it's a label, don't count it as a line
+                line_counter--;
+
+                // if the label doesn't exist in the symbol table
+                // add it to the symbol table with line number
+                if(symbol_table.find(label) == symbol_table.end()) {
+                    symbol_table[label] = std::to_string(line_counter);
+                }
+
+                
+            }
+        }
+    }
     
 
     // 3. variable symbols
     //       - set counter to 16
     //       - everytime new variable
     //       - store <var,counter++>
+
+    int variable_counter = 16;
+
+    for(std::string line: file_contents) {
+        line = remove_comments(line);
+        if(line[0] == '@') {
+            std::string variable = line.substr(1);
+
+            // if token after "@" is not a number
+            // and it is not already in symbol table
+            // add it to the symbol table with counter
+
+            if(!is_number(variable) && symbol_table.find(variable)
+                    == symbol_table.end()) {
+                symbol_table[variable] = std::to_string(variable_counter);
+                variable_counter++;
+            }
+        }
+    }
+
+/*
+    // display symbol table
+    for(auto elem : symbol_table) {
+       std::cout << elem.first << "\t" << elem.second << std::endl;
+    }
+*/
 }
+
+/*
+ * take symbolic assembly and output machine code to file
+ */
 
 std::string assembly_to_machine(std::vector<std::string>
         &file_contents, std::unordered_map<std::string,std::string> 
@@ -119,32 +217,28 @@ std::string assembly_to_machine(std::vector<std::string>
 
     for(std::string line: file_contents) {
 
-        // ignore whitespace
-        size_t found = line.find("//"); 
-        line = line.substr(0, found);
-        line.erase(std::remove_if(line.begin(), line.end(), 
-                    ::isspace), line.end());
-
-        /*
-         *   we also need to ignore (LABEL) declarations
-         */
+        line = remove_comments(line);
+        line = remove_labels(line);
 
         if(line != "") {
 
             // if it starts with an "@" then A, otherwise C
-            if(line.substr(0,1) == "@") {
+            if(line[0] == '@') {
 
-                /*
-                 *   differentiate between symbols and constants here
-                 *   all symbols will be replaced in A instructions only
-                 */
-                
-                // process A instructions here
+                // processing A instructions
+                // always starts with a zero
                 outfile << "0";
-                int address = stoi(line.substr(1,std::string::npos));
-                outfile << std::bitset<15>(address).to_string();
+
+                // check if integer constant or variable symbol
+
+                int address;
+                if(is_number(line.substr(1))) {
+                    address = stoi(line.substr(1,std::string::npos));
+                } else {
+                    address = stoi(symbol_table[line.substr(1)]);
+                }
                 
-                // end of instruction
+                outfile << std::bitset<15>(address).to_string();
                 outfile << std::endl;
 
             } else {
@@ -182,8 +276,6 @@ std::string assembly_to_machine(std::vector<std::string>
 
                 outfile << comp_map[comp] << dest_map[dest]
                     << jump_map[jump];
-
-                // end of instruction
                 outfile << std::endl;
             }
         }
@@ -220,7 +312,7 @@ int main(int argc, char** argv) {
     // output filename based on input filename (xxx.asm to xxx.hack)
     std::string fname = arg1.substr(0,arg1.find_last_of(".")) + ".hack";
     std::ofstream outfile(fname);
-
+    
     // convert non-symbolic assembly to machine code
     outfile << assembly_to_machine(file_contents, symbol_table);
     outfile.close();
