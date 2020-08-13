@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-
 #include "Enum.h"
 #include "Parser.h"
 
