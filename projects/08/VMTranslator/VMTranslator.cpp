@@ -19,8 +19,8 @@
  *      callee's local variables <- @LCL
  *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
- *  Testing order:
- *   - BasicLoop
+ *  Testing project8:
+ *   - (done) BasicLoop
  *   - Fibonacci Series
  *   - SimpleFunction
  *   - NestedCall

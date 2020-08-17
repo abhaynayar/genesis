@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
-
 #include "Enum.h"
 #include "Parser.h"
 

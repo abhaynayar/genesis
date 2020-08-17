@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-
 #include "Enum.h"
 #include "CodeWriter.h"
 
@@ -309,23 +308,43 @@ std::string CodeWriter::registerName(std::string segment) {
     }
 }
 
-// branching commands
+/*
+ *  branching commands
+ */
+
 void CodeWriter::writeLabel(std::string label) {
-    // main challenge is keeping label unique
+    // TODO: change format to functionName.label
+    outfile << "// label " << label << "\n"
+               "(" << label << ")\n";
+    
+    outfile << std::endl;
 }
 
 void CodeWriter::writeGoto(std::string label) {
-    std::cout << "goto " << label << std::endl;
+    outfile << "// goto " << label << "\n";
+    outfile << std::endl;
 }
 
 void CodeWriter::writeIf(std::string label) {
-    std::cout << "if-goto " << label << std::endl;
+    // CONTRACT: we have to pop condition on top of the stack
+    // true==-1 and false==0
+    outfile << "// if-goto " << label << "\n"
+               "@SP\n"
+               "M=M-1\n"
+               "A=M\n"
+               "D=M\n"
+               "@" << label << "\n"
+               "D;JGT\n";
+
+    outfile << std::endl;
 }
 
-// function commands
+/*
+ *  function commands
+ */
+
 void CodeWriter::writeFunction(std::string functionName, int numVars) {
-    std::cout << "function " << functionName
-        << " " << numVars << std::endl;
+    outfile << "// function " << functionName << " " << numVars << "\n";
 /*
  *  function functionName nArgs
  *  (functionName)
@@ -333,10 +352,11 @@ void CodeWriter::writeFunction(std::string functionName, int numVars) {
  *      push 0
  *
  */
+    outfile << std::endl;
 }
 
 void CodeWriter::writeReturn() {
-    std::cout << "return" << std::endl;
+    outfile << "// return" << std::endl;
 
 /*  CONTRACT: the return value always exists on top of the stack
  *  return:
@@ -354,10 +374,10 @@ void CodeWriter::writeReturn() {
 }
 
 void CodeWriter::writeCall(std::string functionName, int numArgs) {
-    std::cout << "call " << functionName << " " << numArgs << std::endl;
+    outfile << "call " << functionName << " " << numArgs << std::endl;
 
 /*  CONTRACT: push nArgs arguments
- *  - first evaluate the parameters
+ *  ? first evaluate the parameters
  *
  *  call:
  *      push returnAddress
@@ -371,5 +391,4 @@ void CodeWriter::writeCall(std::string functionName, int numArgs) {
  *  (returnAddress)
  */
 }
-
 
