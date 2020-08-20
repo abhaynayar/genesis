@@ -1,34 +1,41 @@
 #include <fstream>
 #include <iostream>
-#include "Enum.h"
 #include "CodeWriter.h"
+#include "CommandType.h"
 
-CodeWriter::CodeWriter(std::string fileName) {
-
-    // create output file xxx.vm for xxx.asm
-    int period = fileName.find_last_of(".");
-    fnNoExt = fileName.substr(0,period);
-    outfile.open(fnNoExt + ".asm");
-
-    // module name for static variables won't contain path
-    int last_slash = fnNoExt.find_last_of("/");
-    fnNoExt = fnNoExt.substr(last_slash+1);
-
-    // init variables
-    labelCounter = 0;
+// initialize label counter for auxiliary purposes
+CodeWriter::CodeWriter() {
+    // LABEL0 is used for bootstrap
+    labelCounter = 1;
 }
 
-CodeWriter::~CodeWriter() {
+// close input file
+void CodeWriter::resetFileStream() {
     if(outfile.is_open()) {
         outfile.close();
     }
+}
+
+// CodeWriter only handles individual files
+// directories are handled by driver (main)
+void CodeWriter::setFileName(std::string path) {
+    
+    // removing extension from the path
+    // CONTRACT: path contains ".vm" at the end
+    std::string filenameWx = path.substr(0,path.find_last_of("."));
+    
+    // vm static variables shouldn't contain path
+    int last_slash = filenameWx.find_last_of("/");
+    moduleName = filenameWx.substr(last_slash+1);
+       
+    outfile.open(filenameWx + ".asm");
 }
 
 void CodeWriter::writeArithmetic(std::string cmd) {
     
     // write vm code as a comment
     outfile << "// " << cmd << std::endl;
-    
+
     if(cmd == "add") {
         outfile << "@SP\n"
                    "A=M\n"
@@ -148,7 +155,6 @@ void CodeWriter::writeArithmetic(std::string cmd) {
 }
 
 void CodeWriter::writePushPop(int cmd, std::string segment, int index) {
-    
     if(cmd == C_PUSH) {
         
         // writing vm code as a comment
@@ -210,8 +216,8 @@ void CodeWriter::writePushPop(int cmd, std::string segment, int index) {
             }
         
         } else if(segment == "static") {
-            // "@" + fnNoExt + "." + index
-            outfile << "@" << fnNoExt << "." << index << "\n"
+            // "@" + moduleName + "." + index
+            outfile << "@" << moduleName << "." << index << "\n"
                        "D=M\n"
                        "@SP\n"
                        "A=M\n"
@@ -282,12 +288,12 @@ void CodeWriter::writePushPop(int cmd, std::string segment, int index) {
         
         } else if(segment == "static") {
 
-            // "@" + fnNoExt + "." + index
+            // "@" + moduleName + "." + index
             outfile << "@SP\n"
                        "M=M-1\n"
                        "A=M\n"
                        "D=M\n"
-                       "@" << fnNoExt << "." << index << "\n"
+                       "@" << moduleName << "." << index << "\n"
                        "M=D\n";
         }
     }
@@ -308,12 +314,7 @@ std::string CodeWriter::registerName(std::string segment) {
     }
 }
 
-/*
- *  branching commands
- */
-
 void CodeWriter::writeLabel(std::string label) {
-    // TODO: change format to functionName.label
     outfile << "// label " << label << "\n"
                "(" << label << ")\n";
     
@@ -321,7 +322,10 @@ void CodeWriter::writeLabel(std::string label) {
 }
 
 void CodeWriter::writeGoto(std::string label) {
-    outfile << "// goto " << label << "\n";
+    outfile << "// goto " << label << "\n"
+               "@" << label << "\n"
+               "0;JMP\n";
+
     outfile << std::endl;
 }
 
@@ -334,61 +338,173 @@ void CodeWriter::writeIf(std::string label) {
                "A=M\n"
                "D=M\n"
                "@" << label << "\n"
-               "D;JGT\n";
+               "D;JNE\n";
 
     outfile << std::endl;
 }
 
-/*
- *  function commands
- */
-
 void CodeWriter::writeFunction(std::string functionName, int numVars) {
-    outfile << "// function " << functionName << " " << numVars << "\n";
-/*
- *  function functionName nArgs
- *  (functionName)
- *      repeat nVars times:
- *      push 0
- *
- */
+    outfile << "// function " << functionName << " " << numVars << "\n"
+               "(" << functionName << ")\n"
+               "@" << numVars << "\n"
+               "D=A\n"
+               "(LABEL" << labelCounter++ << ")\n"
+               "@LABEL" << labelCounter-- << "\n"
+               "D;JEQ\n"
+               
+               // nArgs times:
+               // push constant 0
+               "@SP\n"
+               "A=M\n"
+               "M=0\n"
+               "@SP\n"
+               "M=M+1\n"
+               "D=D-1\n"
+               "@LABEL" << labelCounter++ << "\n"
+               "0;JMP\n"
+               "(LABEL" << labelCounter++ << ")\n";
+
     outfile << std::endl;
 }
 
 void CodeWriter::writeReturn() {
-    outfile << "// return" << std::endl;
+    outfile << "// return\n"
+               // endFrame(R13) = LCL
+               "@LCL\n"
+               "D=M\n"
+               "@R13\n"
+               "M=D\n"
 
-/*  CONTRACT: the return value always exists on top of the stack
- *  return:
- *      endFrame = LCL
- *      retAddr = *(endFrame - 5) // if no arg, retAddr is overwritten
- *                                // so we have to store it beforehand
- *      *ARG = pop()
- *      SP = ARG+1
- *      THAT = *(endFrame - 1)
- *      THIS = *(endFrame - 2)
- *      ARG = *(endFrame - 3)
- *      LCL = *(endFrame - 4)
- *      goto retAddr
- */
+               // if no arg, retAddr is overwritten
+               // so we have to store it beforehand
+               // retAddr(R14) = *(endFrame - 5)
+               "@5\n"
+               "A=D-A\n"
+               "D=M\n"
+               "@R14\n"
+               "M=D\n"
+
+               // *ARG = pop()
+               "@SP\n"
+               "M=M-1\n"
+               "A=M\n"
+               "D=M\n"
+               "@ARG\n"
+               "A=M\n"
+               "M=D\n"
+
+               // SP = ARG+1
+               "D=A\n"
+               "@SP\n"
+               "M=D+1\n"
+
+               // THAT = *(endFrame - 1)
+               "@R13\n"
+               "AM=M-1\n"
+               "D=M\n"
+               "@THAT\n"
+               "M=D\n"
+                
+               // THIS = *(endFrame - 2)
+               "@R13\n"
+               "AM=M-1\n"
+               "D=M\n"
+               "@THIS\n"
+               "M=D\n"
+
+               // ARG = *(endFrame - 3)
+               "@R13\n"
+               "AM=M-1\n"
+               "D=M\n"
+               "@ARG\n"
+               "M=D\n"
+
+               // LCL = *(endFrame - 4)
+               "@R13\n"
+               "AM=M-1\n"
+               "D=M\n"
+               "@LCL\n"
+               "M=D\n"
+
+               // goto retAddr
+               "@R14\n"
+               "A=M\n"
+               "0;JMP\n";
+
+    outfile << std::endl;
 }
 
 void CodeWriter::writeCall(std::string functionName, int numArgs) {
-    outfile << "call " << functionName << " " << numArgs << std::endl;
+    outfile << "// call " << functionName << " " << numArgs << "\n";
 
-/*  CONTRACT: push nArgs arguments
- *  ? first evaluate the parameters
- *
- *  call:
- *      push returnAddress
- *      push LCL
- *      push ARG
- *      push THIS
- *      push THAT
- *      ARG = (SP-5)-nArgs
- *      LCL = SP
- *      goto functionName
- *  (returnAddress)
- */
+    // push retAddr
+    outfile << "@LABEL" << labelCounter <<
+               "\nD=A\n"
+               "@SP\n"
+               "A=M\n"
+               "M=D\n"
+               "@SP\n"
+               "M=M+1\n";
+
+    // push LCL
+    outfile << "@LCL\n"
+               "D=M\n"
+               "@SP\n"
+               "A=M\n"
+               "M=D\n"
+               "@SP\n"
+               "M=M+1\n";
+
+    // push ARG
+    outfile << "@ARG\n"
+               "D=M\n"
+               "@SP\n"
+               "A=M\n"
+               "M=D\n"
+               "@SP\n"
+               "M=M+1\n";
+
+    // push THIS
+    outfile << "@THIS\n"
+               "D=M\n"
+               "@SP\n"
+               "A=M\n"
+               "M=D\n"
+               "@SP\n"
+               "M=M+1\n";
+
+    // push THAT
+    outfile << "@THAT\n"
+               "D=M\n"
+               "@SP\n"
+               "A=M\n"
+               "M=D\n"
+               "@SP\n"
+               "M=M+1\n";
+
+    // ARG = (SP-5)-nArgs
+    outfile << "@SP\n"
+               "D=M\n"
+               "@" << numArgs << "\n"
+               "D=D-A\n"
+               "@5\n"
+               "D=D-A\n"
+               "@ARG\n"
+               "M=D\n";
+    
+    // LCL = SP
+    outfile << "@SP\n"
+               "D=M\n"
+               "@LCL\n"
+               "M=D\n";
+    
+    // goto functionName
+    outfile << "@" << functionName << "\n"
+               "0;JMP\n";
+
+    // (retAddr)
+    outfile << "(LABEL" << labelCounter++ << ")\n";
+    outfile << std::endl;
+
 }
 

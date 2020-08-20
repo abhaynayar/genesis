@@ -4,7 +4,7 @@
 all: VMTranslator
 
 VMTranslator: VMTranslator.o Parser.o CodeWriter.o
-	g++ VMTranslator.o Parser.o CodeWriter.o -o VMTranslator
+	g++ -o VMTranslator -std=c++17 VMTranslator.o Parser.o CodeWriter.o -lstdc++fs
 
 VMTranslator.o: VMTranslator.cpp
 	g++ -c VMTranslator.cpp

@@ -1,13 +1,19 @@
+#include <regex>
 #include <fstream>
 #include <iostream>
-#include <regex>
-#include "Enum.h"
 #include "Parser.h"
+#include "CommandType.h"
 
-// opens input file
-Parser::Parser(std::string filename) {
-    // TODO: handle directories
-    infile.open(filename);
+// open input file
+void Parser::setFileName(std::string path) {
+    infile.open(path);
+}
+
+// close input file
+void Parser::resetFileStream() {
+    if(infile.is_open()) {
+        infile.close();
+    }
 }
 
 // check if file stream is empty
@@ -18,9 +24,6 @@ bool Parser::hasMoreCommands() {
 // read next command from the input and make it current
 void Parser::advance() {
     std::getline(infile,currentCommand);
-
-    // TODO: remove whitespace and comments
-
     // incase we take the source from another os
     // fix crlf issue: \r remains after getline
     if(currentCommand.back() == '\r') {
@@ -38,7 +41,7 @@ int Parser::commandType() {
     // extract commandType string
     // ASSUMING: there is no whitespace before the command token
     std::string cmd = currentCommand.substr(0,space);
-    
+
     // change string to enumeration
     if(cmd == "add" || cmd == "sub" || cmd == "neg" ||
             cmd == "eq" || cmd == "gt" || cmd == "lt" ||
@@ -69,34 +72,29 @@ std::string Parser::arg1() {
     // return first arg of current command
     // C_ARITHMETIC: return cmd itself
     // C_RETURN: should not be called
-
-    int space1 = currentCommand.find(" ");
-    int space2 = currentCommand.find(" ", space1+1);
-
-    // for C_ARITHMETIC commands
-    if(space1 == -1 && space2 == -1) {
-        return currentCommand;
-    }
     
-    return currentCommand.substr(space1+1, space2-(space1+1));
+    std::regex reg("\\s+"); // use whitespace as delimiter
+    std::sregex_token_iterator iter(currentCommand.begin(), 
+            currentCommand.end(), reg, -1);
+    std::sregex_token_iterator end;
+    std::vector<std::string> v(iter, end);
+    
+    if(commandType() == C_ARITHMETIC) {
+        return v[0];
+    } else {
+        return v[1];
+    }
 }
 
 int Parser::arg2() {
     // return second arg of current command
     // only call for PUSH, POP, FUNCTION, CALL
     
-    // TODO: use regex in other parsing functions as well
     std::regex reg("\\s+"); // use whitespace as delimiter
     std::sregex_token_iterator iter(currentCommand.begin(), 
             currentCommand.end(), reg, -1);
     std::sregex_token_iterator end;
     std::vector<std::string> v(iter, end);
     return stoi(v[2]);
-}
-
-Parser::~Parser() {
-    if(infile.is_open()) {
-        infile.close();
-    }
 }
 

@@ -3,9 +3,8 @@ private:
     std::ifstream infile;
     std::string currentCommand;
 public:
-    Parser(std::string);
-    ~Parser();
-
+    void resetFileStream();
+    void setFileName(std::string);
     bool hasMoreCommands();
     void advance();
     

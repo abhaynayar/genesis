@@ -10,6 +10,6 @@
 
 function Sys.init 0
 push constant 4
-call Main.fibonacci 1   // computes the 4'th fibonacci element
+call Main.fibonacci 1   /// computes the 4'th fibonacci element
 label WHILE
 goto WHILE              // loops infinitely
