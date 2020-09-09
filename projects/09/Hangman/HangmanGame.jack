@@ -1,0 +1,121 @@
+class HangmanGame{
+
+  method void run(String name) {
+       var char key;                      //Variable declaration.
+	   var HangmanStructure hangman;
+	   var int i,fail,n;
+	   var boolean exit;                  
+	   var int j,l,k;
+       var char c,m;
+	   var String a,s;
+	   var Array st;
+	   var boolean f;
+	   let st=Array.new(4);               //Array to store secret word.
+	   let st[1]="ALU";                  
+	   let st[2]="NAND";
+	   let st[3]="POINTER";
+	   let f=false;                       //used to track the pressed key is secret word letter.
+	   let l=0;                           //used to track the length of secret word.
+	   let n=0;                           //used to track the success attempts.
+	   let exit=false;                    //used to exit from the game.
+	   let i=0;                           //used to track the level of game.
+	   let k=12;                          //used to increment the letter used division.
+	   let fail=0;let s=st[1];
+       let a="       ";		              //String to display the secret word's letter. 
+	   let j=0;                           //increment variable for while loop.
+	   let fail=0;                        //to track the fail attempts.
+	   
+	   while(~(key=132)){
+            let key = Keyboard.keyPressed();              //wait to press right arrow key. 
+			}
+		
+	   while(~exit)
+		 {
+		   while(key=0){let key = Keyboard.keyPressed();}
+           
+		   if(key=132)                                   //to set the screen level wise,when right arrow pressed.
+		       {do Screen.clearScreen();
+		         if(i=0){let i=i+1;}
+		         if(n=1){let i=i+1;}
+		         if(i>3){do Screen.clearScreen();         //condition check if no more nextlevel available. 
+				         do Output.moveCursor(10,28);
+						 do Output.printString("No more level.");
+		                 do Output.moveCursor(11,19);
+						 do Output.printString("Hope you like the game,");
+						 do Output.printString(name);
+		                 do Output.printString(".");
+						 let exit=true;}
+		         else{                                    //else continue screen display set up. 
+		                 do hangman.stand();
+		                 do hangman.frame(i);
+		                 let fail=0;let s=st[i]; let j=0;
+                         while(j<s.length()){do a.setCharAt(j,32);let j=j+1;}	
+                         do Output.moveCursor(3,0);
+		                 do Output.printString("THE WORD CONSISTS OF ");
+		                 do Output.printInt(s.length());
+		                 do Output.printString(" LETTERS.");	
+                         do Output.moveCursor(6,5);
+		                 do Output.printString("GUESS THE WORD:");	  
+	                     let l=0;let k=12;let n=0;
+			         }
+		        }
+		   if(key=129)                  //if backspace key pressed the current level restart.
+		        {
+		         do Screen.clearScreen();
+		         do hangman.stand();
+		         do hangman.frame(i);
+		         let fail=0;let s=st[i];  let j=0;
+	             do Output.moveCursor(3,0);
+		         do Output.printString("THE WORD CONSISTS OF ");
+		         do Output.printInt(s.length());
+		         do Output.printString(" LETTERS.");
+		         do Output.moveCursor(6,5);
+		         do Output.printString("GUESS THE WORD:");
+	             while(j<s.length()){do a.setCharAt(j,32);let j=j+1;}
+	             let l=0;let k=12;
+		        }
+		   if(key=140)                    // if escape key pressed exit from game.
+		        {let exit=true;
+		        }
+		   if(key>64&key<91)             //if pressed key is between A to Z 
+		        {
+		         do Output.moveCursor(19,k);
+				 do Output.printChar(key);let k=k+2; //display used letter.
+		         let j=0;let c=key;let f=false;
+		         while(j<s.length()){                //checking pressed key in word or not.
+				                     let m=s.charAt(j);
+		                             if(m=c){do a.setCharAt(j,c);
+		                                     let f=true;
+		                                     let l=l+1;
+											}
+		                             let j=j+1;
+	                                }
+		         if(f){            //if success attempts.
+				     if(fail<7){  
+					            if(l=s.length()){                                 //if all letter is found 
+								                 do Output.moveCursor(6,21);
+												 do Output.printString(a);
+												 do hangman.succ(i,name);let n=1;
+												} 
+		                        else{                                              //if single letter found.
+					                 do Output.moveCursor(6,21);
+						             do Output.printString(a);
+						            }
+							   }
+					 }
+		         else {   //fail attempts,display of body part of hangman.
+				      if(key>64&key<91){
+					                    let fail=fail+1;
+										do hangman.fl(fail,i,name);
+									   }
+					 }
+		
+	            }
+		    while(~(key=0))
+		        {
+		         let key = Keyboard.keyPressed(); 
+		        }
+		} //end of game.
+     return;
+   }
+}

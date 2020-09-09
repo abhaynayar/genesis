@@ -1,0 +1,271 @@
+// class Main
+// function void Main.startRandom
+function Main.startRandom 1
+push constant 11
+push constant 5
+call Output.moveCursor 2
+pop temp 0 // void
+push constant 25 // "Press and release any key"
+call String.new 1
+push constant 80 // 'P'
+call String.appendChar 2
+push constant 114 // 'r'
+call String.appendChar 2
+push constant 101 // 'e'
+call String.appendChar 2
+push constant 115 // 's'
+call String.appendChar 2
+push constant 115 // 's'
+call String.appendChar 2
+push constant 32 // ' '
+call String.appendChar 2
+push constant 97 // 'a'
+call String.appendChar 2
+push constant 110 // 'n'
+call String.appendChar 2
+push constant 100 // 'd'
+call String.appendChar 2
+push constant 32 // ' '
+call String.appendChar 2
+push constant 114 // 'r'
+call String.appendChar 2
+push constant 101 // 'e'
+call String.appendChar 2
+push constant 108 // 'l'
+call String.appendChar 2
+push constant 101 // 'e'
+call String.appendChar 2
+push constant 97 // 'a'
+call String.appendChar 2
+push constant 115 // 's'
+call String.appendChar 2
+push constant 101 // 'e'
+call String.appendChar 2
+push constant 32 // ' '
+call String.appendChar 2
+push constant 97 // 'a'
+call String.appendChar 2
+push constant 110 // 'n'
+call String.appendChar 2
+push constant 121 // 'y'
+call String.appendChar 2
+push constant 32 // ' '
+call String.appendChar 2
+push constant 107 // 'k'
+call String.appendChar 2
+push constant 101 // 'e'
+call String.appendChar 2
+push constant 121 // 'y'
+call String.appendChar 2
+call Output.printString 1
+pop temp 0 // void
+push constant 0
+pop local 0
+label MAIN.STARTRANDOM.WHILE10_LOOP
+call Keyboard.keyPressed 0
+push constant 0
+eq
+not
+if-goto MAIN.STARTRANDOM.WHILE10_END
+push local 0
+push constant 1
+add
+pop local 0
+goto MAIN.STARTRANDOM.WHILE10_LOOP
+label MAIN.STARTRANDOM.WHILE10_END
+label MAIN.STARTRANDOM.WHILE11_LOOP
+call Keyboard.keyPressed 0
+push constant 0
+eq
+not
+not
+if-goto MAIN.STARTRANDOM.WHILE11_END
+push local 0
+push constant 1
+add
+pop local 0
+goto MAIN.STARTRANDOM.WHILE11_LOOP
+label MAIN.STARTRANDOM.WHILE11_END
+push local 0
+call LCGRandom.setSeed 1
+pop temp 0 // void
+push constant 0
+return
+// function char Main.waitKey
+function Main.waitKey 1
+call Keyboard.keyPressed 0
+pop local 0
+label MAIN.WAITKEY.WHILE12_LOOP
+push local 0
+push constant 0
+eq
+not
+if-goto MAIN.WAITKEY.WHILE12_END
+call Keyboard.keyPressed 0
+pop local 0
+goto MAIN.WAITKEY.WHILE12_LOOP
+label MAIN.WAITKEY.WHILE12_END
+label MAIN.WAITKEY.WHILE13_LOOP
+call Keyboard.keyPressed 0
+push constant 0
+eq
+not
+not
+if-goto MAIN.WAITKEY.WHILE13_END
+goto MAIN.WAITKEY.WHILE13_LOOP
+label MAIN.WAITKEY.WHILE13_END
+push local 0
+return
+// function int Main.makeMove
+function Main.makeMove 0
+push argument 1
+push constant 130
+eq
+not
+if-goto MAIN.MAKEMOVE.IF9_ELSE
+push argument 0
+call Board.pushLeft 1
+return
+goto MAIN.MAKEMOVE.IF9_END
+label MAIN.MAKEMOVE.IF9_ELSE
+label MAIN.MAKEMOVE.IF9_END
+push argument 1
+push constant 131
+eq
+not
+if-goto MAIN.MAKEMOVE.IF10_ELSE
+push argument 0
+call Board.pushUp 1
+return
+goto MAIN.MAKEMOVE.IF10_END
+label MAIN.MAKEMOVE.IF10_ELSE
+label MAIN.MAKEMOVE.IF10_END
+push argument 1
+push constant 132
+eq
+not
+if-goto MAIN.MAKEMOVE.IF11_ELSE
+push argument 0
+call Board.pushRight 1
+return
+goto MAIN.MAKEMOVE.IF11_END
+label MAIN.MAKEMOVE.IF11_ELSE
+label MAIN.MAKEMOVE.IF11_END
+push argument 1
+push constant 133
+eq
+not
+if-goto MAIN.MAKEMOVE.IF12_ELSE
+push argument 0
+call Board.pushDown 1
+return
+goto MAIN.MAKEMOVE.IF12_END
+label MAIN.MAKEMOVE.IF12_ELSE
+label MAIN.MAKEMOVE.IF12_END
+push constant 0
+return
+// function void Main.game
+function Main.game 3
+call Board.new 0
+pop local 0
+push constant 0
+pop local 2
+label MAIN.GAME.WHILE14_LOOP
+push constant 0 // true
+not
+not
+if-goto MAIN.GAME.WHILE14_END
+push local 0
+call Board.insert 1
+not
+not
+if-goto MAIN.GAME.IF13_ELSE
+push constant 10
+push constant 3
+call Output.moveCursor 2
+pop temp 0 // void
+push constant 4 // "GAME"
+call String.new 1
+push constant 71 // 'G'
+call String.appendChar 2
+push constant 65 // 'A'
+call String.appendChar 2
+push constant 77 // 'M'
+call String.appendChar 2
+push constant 69 // 'E'
+call String.appendChar 2
+call Output.printString 1
+pop temp 0 // void
+push constant 12
+push constant 3
+call Output.moveCursor 2
+pop temp 0 // void
+push constant 4 // "OVER"
+call String.new 1
+push constant 79 // 'O'
+call String.appendChar 2
+push constant 86 // 'V'
+call String.appendChar 2
+push constant 69 // 'E'
+call String.appendChar 2
+push constant 82 // 'R'
+call String.appendChar 2
+call Output.printString 1
+pop temp 0 // void
+push constant 0
+return
+goto MAIN.GAME.IF13_END
+label MAIN.GAME.IF13_ELSE
+label MAIN.GAME.IF13_END
+push local 0
+call Board.draw 1
+pop temp 0 // void
+push constant 2
+push constant 1
+call Output.moveCursor 2
+pop temp 0 // void
+push constant 7 // "Points:"
+call String.new 1
+push constant 80 // 'P'
+call String.appendChar 2
+push constant 111 // 'o'
+call String.appendChar 2
+push constant 105 // 'i'
+call String.appendChar 2
+push constant 110 // 'n'
+call String.appendChar 2
+push constant 116 // 't'
+call String.appendChar 2
+push constant 115 // 's'
+call String.appendChar 2
+push constant 58 // ':'
+call String.appendChar 2
+call Output.printString 1
+pop temp 0 // void
+push constant 3
+push constant 2
+call Output.moveCursor 2
+pop temp 0 // void
+push local 2
+call Output.printInt 1
+pop temp 0 // void
+call Main.waitKey 0
+pop local 1
+push local 2
+push local 0
+push local 1
+call Main.makeMove 2
+add
+pop local 2
+goto MAIN.GAME.WHILE14_LOOP
+label MAIN.GAME.WHILE14_END
+push constant 0
+return
+// function void Main.main
+function Main.main 0
+call Main.startRandom 0
+pop temp 0 // void
+call Main.game 0
+pop temp 0 // void
+push constant 0
+return

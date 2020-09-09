@@ -1,0 +1,13 @@
+
+symbol table:
+
+variable properties:
+- name (identifier)
+- type (int, char, boolean, class name)
+- kind (field, static, local, argument)
+- scope (class level, subroutine level)
+
+NOTE: for methods, we need "this" as argument 0
+
+
+

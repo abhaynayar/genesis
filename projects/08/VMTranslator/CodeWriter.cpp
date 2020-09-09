@@ -23,11 +23,14 @@ void CodeWriter::setFileName(std::string path) {
     // removing extension from the path
     // CONTRACT: path contains ".vm" at the end
     std::string filenameWx = path.substr(0,path.find_last_of("."));
+    std::cout << "filenameWx: " << filenameWx << std::endl;
+    std::cout << "filenameWx substr1 passed!" << std::endl;
     
-    // vm static variables shouldn't contain path
+    // FLAW: vm static variables shouldn't contain path
+    // so if file is in x/y/z.asm, varname will be @x/y/z.1
     int last_slash = filenameWx.find_last_of("/");
     moduleName = filenameWx.substr(last_slash+1);
-       
+    std::cout << "filenameWx substr2 passed!" << std::endl;
     outfile.open(filenameWx + ".asm");
 }
 

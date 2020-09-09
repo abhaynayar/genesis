@@ -1,0 +1,207 @@
+class Main {
+    function void main() {
+
+        // variable declarations
+        var int i;
+        var char key;
+        var boolean exit;
+        var int toggle; // -1 for cross, 1 for naught
+        var int location; // coordinate on the screen
+        var Array board; // contains 9 toggle values
+        var int filled;
+
+        let board = Array.new(9);
+
+        // printing the title
+        do Output.moveCursor(0,22);
+        do Output.printString("TIC-TAC-TOE");
+        do Output.moveCursor(1,21);
+        do Output.printString("(Multiplayer)");
+
+        // printing the instructions
+        do Output.moveCursor(21,0);
+        do Output.printString("Press number to play");
+        do Output.moveCursor(22,0);
+        do Output.printString("Press 'Q' to exit");
+
+        // drawing the board
+        do Screen.setColor(true);
+        do Screen.drawRectangle(188,50,190,210);
+        do Screen.drawRectangle(248,50,250,210);
+        do Screen.drawRectangle(135,100,305,102);
+        do Screen.drawRectangle(135,155,305,157);
+
+        // adding numbers to boxes
+        do Output.moveCursor(8,22); do Output.printString("1");
+        do Output.moveCursor(8,30); do Output.printString("2");
+        do Output.moveCursor(8,37); do Output.printString("3");
+        do Output.moveCursor(13,22); do Output.printString("4");
+        do Output.moveCursor(13,30); do Output.printString("5");
+        do Output.moveCursor(13,37); do Output.printString("6");
+        do Output.moveCursor(18,22); do Output.printString("7");
+        do Output.moveCursor(18,30); do Output.printString("8");
+        do Output.moveCursor(18,37); do Output.printString("9");
+
+        let toggle = 1; // naught(1) or cross(-1)
+        let location = 0; // where to place the mark
+        while(~exit) {
+
+            do Output.moveCursor(2,0);
+            if(toggle=1) { // naught, since it is upcoming
+                do Output.printString("O's turn");
+            } else {
+                do Output.printString("X's turn");
+            }
+            
+            // waiting for a key to be pressed
+            while(key = 0) {
+                let key = Keyboard.keyPressed();
+            }
+            
+            // checking which key is pressed
+            if (key = 49) {
+                let filled = 0;
+                let location = 1897;
+            }
+            if (key = 50) {
+                let filled = 1;
+                let location = 1901;
+            }
+            if (key = 51) {
+                let filled = 2;
+                let location = 1905;
+            }
+            if (key = 52) {
+                let filled = 3;
+                let location = 3593;
+            }
+            if (key = 53) {
+                let filled = 4;
+                let location = 3597;
+            }
+            if (key = 54) {
+                let filled = 5;
+                let location = 3601;
+            }
+            if (key = 55) {
+                let filled = 6;
+                let location = 5289;
+            }
+            if (key = 56) {
+                let filled = 7;
+                let location = 5293;
+            }
+            if (key = 57) {
+                let filled = 8;
+                let location = 5297;
+            }
+            if (key = 81) { // exit if "q" is pressed
+                do Sys.halt();
+            }
+             
+            // only fill if not filled
+            if(board[filled]=0) {
+                let board[filled] = toggle;
+                // alernate turns for crosses and naughts
+                if(toggle = 1) {
+                    do Main.drawNaught(location);
+                    let toggle = -1;
+                } else {
+                    do Main.drawCross(location);
+                    let toggle = 1;
+                }
+            }
+
+            // waiting for key to be unpressed
+            while (~(key = 0)) {
+               let key = Keyboard.keyPressed();
+            }
+
+            // check if somebody won
+            do Main.checkWin(board[0]+board[1]+board[2]);
+            do Main.checkWin(board[3]+board[4]+board[5]);
+            do Main.checkWin(board[6]+board[7]+board[8]);
+            do Main.checkWin(board[0]+board[3]+board[6]);
+            do Main.checkWin(board[1]+board[4]+board[7]);
+            do Main.checkWin(board[2]+board[5]+board[8]);
+            do Main.checkWin(board[0]+board[4]+board[8]);
+            do Main.checkWin(board[2]+board[4]+board[6]);
+            // declare a draw if the board is filled
+            
+            let i = 0;
+            let exit = true;
+            while (i<9) {
+                if (board[i]=0) {
+                    let exit = false;
+                }
+                let i = i+1;
+            }
+            if(exit) {
+                do Output.moveCursor(2,0);
+                do Output.printString("Draw       ");
+                do Sys.halt();
+            }
+        }
+
+        return;
+    }
+
+    function void checkWin(int sum) {
+        if(sum = 3) {
+            do Output.moveCursor(3,0);
+            do Output.printString("O won");
+            do Sys.halt();
+        }
+        if(sum = -3) {
+            do Output.moveCursor(3,0);
+            do Output.printString("X won");
+            do Sys.halt();
+        }
+        return;
+    }
+    
+    function void drawCross(int location) {
+        var int memAddress;
+    	let memAddress = 16384+location;
+    	do Memory.poke(memAddress+0, -16381);
+    	do Memory.poke(memAddress+32, -8185);
+    	do Memory.poke(memAddress+64, 28686);
+    	do Memory.poke(memAddress+96, 14364);
+    	do Memory.poke(memAddress+128, 7224);
+    	do Memory.poke(memAddress+160, 3696);
+    	do Memory.poke(memAddress+192, 2016);
+    	do Memory.poke(memAddress+224, 960);
+    	do Memory.poke(memAddress+256, 960);
+    	do Memory.poke(memAddress+288, 2016);
+    	do Memory.poke(memAddress+320, 3696);
+    	do Memory.poke(memAddress+352, 7224);
+    	do Memory.poke(memAddress+384, 14364);
+    	do Memory.poke(memAddress+416, 28686);
+    	do Memory.poke(memAddress+448, -8185);
+    	do Memory.poke(memAddress+480, -16381);
+    	return;
+    }
+
+    function void drawNaught(int location) {
+        var int memAddress;
+    	let memAddress = 16384+location;
+	    do Memory.poke(memAddress+0, 2016);
+	    do Memory.poke(memAddress+32, 8184);
+	    do Memory.poke(memAddress+64, 15390);
+	    do Memory.poke(memAddress+96, -2033);
+	    do Memory.poke(memAddress+128, -8185);
+	    do Memory.poke(memAddress+160, -8185);
+	    do Memory.poke(memAddress+192, -8185);
+	    do Memory.poke(memAddress+224, -8185);
+	    do Memory.poke(memAddress+256, -8185);
+	    do Memory.poke(memAddress+288, -8185);
+	    do Memory.poke(memAddress+320, -8185);
+	    do Memory.poke(memAddress+352, -4081);
+	    do Memory.poke(memAddress+384, 30750);
+	    do Memory.poke(memAddress+416, 32764);
+	    do Memory.poke(memAddress+448, 16376);
+	    do Memory.poke(memAddress+480, 8176);
+    	return;
+    }
+}
+

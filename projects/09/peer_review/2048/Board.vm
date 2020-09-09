@@ -1,0 +1,607 @@
+// class Board
+// constructor Board Board.new
+function Board.new 1
+push constant 1
+call Memory.alloc 1
+pop pointer 0
+push constant 16
+call Array.new 1
+pop this 0
+push constant 0
+pop local 0
+label BOARD.NEW.WHILE0_LOOP
+push local 0
+push constant 16
+lt
+not
+if-goto BOARD.NEW.WHILE0_END
+push constant 0
+push this 0
+push local 0
+add
+pop pointer 1
+pop that 0
+push local 0
+push constant 1
+add
+pop local 0
+goto BOARD.NEW.WHILE0_LOOP
+label BOARD.NEW.WHILE0_END
+push pointer 0 // this
+return
+// method void Board.draw
+function Board.draw 1
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+call Screen.clearScreen 0
+pop temp 0 // void
+label BOARD.DRAW.WHILE1_LOOP
+push local 0
+push constant 16
+lt
+not
+if-goto BOARD.DRAW.WHILE1_END
+push pointer 0
+push local 0
+call Board.drawField 2
+pop temp 0 // void
+push local 0
+push constant 1
+add
+pop local 0
+goto BOARD.DRAW.WHILE1_LOOP
+label BOARD.DRAW.WHILE1_END
+push constant 0
+return
+// method void Board.drawField
+function Board.drawField 2
+push argument 0
+pop pointer 0
+push argument 1
+push constant 4
+call Math.divide 2
+pop local 1
+push argument 1
+push constant 4
+push local 1
+call Math.multiply 2
+sub
+pop local 0
+push constant 0 // true
+not
+call Screen.setColor 1
+pop temp 0 // void
+push local 0
+push constant 64
+call Math.multiply 2
+push constant 128
+add
+push local 1
+push constant 64
+call Math.multiply 2
+push local 0
+push constant 64
+call Math.multiply 2
+push constant 60
+add
+push constant 128
+add
+push local 1
+push constant 64
+call Math.multiply 2
+push constant 60
+add
+call Screen.drawRectangle 4
+pop temp 0 // void
+push this 0
+push argument 1
+add
+pop pointer 1
+push that 0
+push constant 0
+eq
+not
+if-goto BOARD.DRAWFIELD.IF0_ELSE
+push constant 0 // false
+call Screen.setColor 1
+pop temp 0 // void
+push local 0
+push constant 64
+call Math.multiply 2
+push constant 1
+add
+push constant 128
+add
+push local 1
+push constant 64
+call Math.multiply 2
+push constant 1
+add
+push local 0
+push constant 64
+call Math.multiply 2
+push constant 59
+add
+push constant 128
+add
+push local 1
+push constant 64
+call Math.multiply 2
+push constant 59
+add
+call Screen.drawRectangle 4
+pop temp 0 // void
+goto BOARD.DRAWFIELD.IF0_END
+label BOARD.DRAWFIELD.IF0_ELSE
+push constant 0 // false
+call Screen.setColor 1
+pop temp 0 // void
+push local 0
+push constant 64
+call Math.multiply 2
+push constant 3
+add
+push constant 128
+add
+push local 1
+push constant 64
+call Math.multiply 2
+push constant 3
+add
+push local 0
+push constant 64
+call Math.multiply 2
+push constant 57
+add
+push constant 128
+add
+push local 1
+push constant 64
+call Math.multiply 2
+push constant 57
+add
+call Screen.drawRectangle 4
+pop temp 0 // void
+push local 1
+push constant 6
+call Math.multiply 2
+push constant 2
+add
+push constant 8
+push local 0
+call Math.multiply 2
+push constant 20
+add
+call Output.moveCursor 2
+pop temp 0 // void
+push this 0
+push argument 1
+add
+pop pointer 1
+push that 0
+call Output.printInt 1
+pop temp 0 // void
+label BOARD.DRAWFIELD.IF0_END
+push constant 0
+return
+// method boolean Board.insert
+function Board.insert 3
+push argument 0
+pop pointer 0
+push constant 0
+pop local 2
+label BOARD.INSERT.WHILE2_LOOP
+push local 2
+push constant 16
+lt
+not
+if-goto BOARD.INSERT.WHILE2_END
+push this 0
+push local 2
+add
+pop pointer 1
+push that 0
+push constant 0
+eq
+not
+if-goto BOARD.INSERT.IF1_ELSE
+push constant 100
+pop local 2
+goto BOARD.INSERT.IF1_END
+label BOARD.INSERT.IF1_ELSE
+push local 2
+push constant 1
+add
+pop local 2
+label BOARD.INSERT.IF1_END
+goto BOARD.INSERT.WHILE2_LOOP
+label BOARD.INSERT.WHILE2_END
+push local 2
+push constant 100
+eq
+not
+not
+if-goto BOARD.INSERT.IF2_ELSE
+push constant 0 // false
+return
+goto BOARD.INSERT.IF2_END
+label BOARD.INSERT.IF2_ELSE
+label BOARD.INSERT.IF2_END
+push constant 1
+neg
+pop local 0
+label BOARD.INSERT.WHILE3_LOOP
+push local 0
+push constant 0
+lt
+not
+if-goto BOARD.INSERT.WHILE3_END
+push constant 0
+push constant 15
+call LCGRandom.randRange 2
+pop local 0
+push this 0
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 0
+eq
+not
+not
+if-goto BOARD.INSERT.IF3_ELSE
+push constant 1
+neg
+pop local 0
+goto BOARD.INSERT.IF3_END
+label BOARD.INSERT.IF3_ELSE
+label BOARD.INSERT.IF3_END
+goto BOARD.INSERT.WHILE3_LOOP
+label BOARD.INSERT.WHILE3_END
+push constant 0
+push constant 9
+call LCGRandom.randRange 2
+pop local 1
+push local 1
+push constant 0
+eq
+not
+if-goto BOARD.INSERT.IF4_ELSE
+push constant 4
+pop local 1
+goto BOARD.INSERT.IF4_END
+label BOARD.INSERT.IF4_ELSE
+push constant 2
+pop local 1
+label BOARD.INSERT.IF4_END
+push local 1
+push this 0
+push local 0
+add
+pop pointer 1
+pop that 0
+push constant 0 // true
+not
+return
+// method int Board.pushLeft
+function Board.pushLeft 7
+push argument 0
+pop pointer 0
+push constant 0
+pop local 6
+push constant 0
+pop local 0
+label BOARD.PUSHLEFT.WHILE4_LOOP
+push local 0
+push constant 4
+lt
+not
+if-goto BOARD.PUSHLEFT.WHILE4_END
+push local 0
+push constant 1
+add
+push constant 4
+call Math.multiply 2
+pop local 4
+push constant 0
+pop local 1
+label BOARD.PUSHLEFT.WHILE5_LOOP
+push local 1
+push constant 4
+lt
+not
+if-goto BOARD.PUSHLEFT.WHILE5_END
+push local 0
+push constant 4
+call Math.multiply 2
+push local 1
+add
+pop local 2
+push local 2
+pop local 3
+push constant 0
+pop local 5
+label BOARD.PUSHLEFT.WHILE6_LOOP
+push local 3
+push local 4
+lt
+not
+if-goto BOARD.PUSHLEFT.WHILE6_END
+push local 5
+push constant 0
+eq
+not
+if-goto BOARD.PUSHLEFT.IF5_ELSE
+push this 0
+push local 3
+add
+pop pointer 1
+push that 0
+push constant 0
+gt
+not
+if-goto BOARD.PUSHLEFT.IF6_ELSE
+push this 0
+push local 3
+add
+pop pointer 1
+push that 0
+pop local 5
+push constant 0
+push this 0
+push local 3
+add
+pop pointer 1
+pop that 0
+goto BOARD.PUSHLEFT.IF6_END
+label BOARD.PUSHLEFT.IF6_ELSE
+label BOARD.PUSHLEFT.IF6_END
+push local 3
+push constant 1
+add
+pop local 3
+goto BOARD.PUSHLEFT.IF5_END
+label BOARD.PUSHLEFT.IF5_ELSE
+push this 0
+push local 3
+add
+pop pointer 1
+push that 0
+push constant 0
+gt
+not
+if-goto BOARD.PUSHLEFT.IF7_ELSE
+push this 0
+push local 3
+add
+pop pointer 1
+push that 0
+push local 5
+eq
+not
+if-goto BOARD.PUSHLEFT.IF8_ELSE
+push local 5
+push constant 2
+call Math.multiply 2
+pop local 5
+push constant 0
+push this 0
+push local 3
+add
+pop pointer 1
+pop that 0
+push local 6
+push local 5
+add
+pop local 6
+goto BOARD.PUSHLEFT.IF8_END
+label BOARD.PUSHLEFT.IF8_ELSE
+label BOARD.PUSHLEFT.IF8_END
+push local 4
+pop local 3
+goto BOARD.PUSHLEFT.IF7_END
+label BOARD.PUSHLEFT.IF7_ELSE
+push local 3
+push constant 1
+add
+pop local 3
+label BOARD.PUSHLEFT.IF7_END
+label BOARD.PUSHLEFT.IF5_END
+goto BOARD.PUSHLEFT.WHILE6_LOOP
+label BOARD.PUSHLEFT.WHILE6_END
+push local 5
+push this 0
+push local 2
+add
+pop pointer 1
+pop that 0
+push local 1
+push constant 1
+add
+pop local 1
+goto BOARD.PUSHLEFT.WHILE5_LOOP
+label BOARD.PUSHLEFT.WHILE5_END
+push local 0
+push constant 1
+add
+pop local 0
+goto BOARD.PUSHLEFT.WHILE4_LOOP
+label BOARD.PUSHLEFT.WHILE4_END
+push local 6
+return
+// method void Board.swap_idx
+function Board.swap_idx 1
+push argument 0
+pop pointer 0
+push this 0
+push argument 1
+add
+pop pointer 1
+push that 0
+pop local 0
+push this 0
+push argument 2
+add
+pop pointer 1
+push that 0
+push this 0
+push argument 1
+add
+pop pointer 1
+pop that 0
+push local 0
+push this 0
+push argument 2
+add
+pop pointer 1
+pop that 0
+push constant 0
+return
+// method void Board.mirror
+function Board.mirror 1
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+label BOARD.MIRROR.WHILE7_LOOP
+push local 0
+push constant 4
+lt
+not
+if-goto BOARD.MIRROR.WHILE7_END
+push pointer 0
+push local 0
+push constant 4
+call Math.multiply 2
+push constant 0
+add
+push local 0
+push constant 4
+call Math.multiply 2
+push constant 3
+add
+call Board.swap_idx 3
+pop temp 0 // void
+push pointer 0
+push local 0
+push constant 4
+call Math.multiply 2
+push constant 1
+add
+push local 0
+push constant 4
+call Math.multiply 2
+push constant 2
+add
+call Board.swap_idx 3
+pop temp 0 // void
+push local 0
+push constant 1
+add
+pop local 0
+goto BOARD.MIRROR.WHILE7_LOOP
+label BOARD.MIRROR.WHILE7_END
+push constant 0
+return
+// method void Board.transpose
+function Board.transpose 3
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+label BOARD.TRANSPOSE.WHILE8_LOOP
+push local 0
+push constant 4
+lt
+not
+if-goto BOARD.TRANSPOSE.WHILE8_END
+push local 0
+push constant 1
+add
+pop local 1
+label BOARD.TRANSPOSE.WHILE9_LOOP
+push local 1
+push constant 4
+lt
+not
+if-goto BOARD.TRANSPOSE.WHILE9_END
+push pointer 0
+push local 0
+push constant 4
+call Math.multiply 2
+push local 1
+add
+push local 1
+push constant 4
+call Math.multiply 2
+push local 0
+add
+call Board.swap_idx 3
+pop temp 0 // void
+push local 1
+push constant 1
+add
+pop local 1
+goto BOARD.TRANSPOSE.WHILE9_LOOP
+label BOARD.TRANSPOSE.WHILE9_END
+push local 0
+push constant 1
+add
+pop local 0
+goto BOARD.TRANSPOSE.WHILE8_LOOP
+label BOARD.TRANSPOSE.WHILE8_END
+push constant 0
+return
+// method int Board.pushUp
+function Board.pushUp 1
+push argument 0
+pop pointer 0
+push pointer 0
+call Board.transpose 1
+pop temp 0 // void
+push pointer 0
+call Board.pushLeft 1
+pop local 0
+push pointer 0
+call Board.transpose 1
+pop temp 0 // void
+push local 0
+return
+// method int Board.pushDown
+function Board.pushDown 1
+push argument 0
+pop pointer 0
+push pointer 0
+call Board.transpose 1
+pop temp 0 // void
+push pointer 0
+call Board.mirror 1
+pop temp 0 // void
+push pointer 0
+call Board.pushLeft 1
+pop local 0
+push pointer 0
+call Board.mirror 1
+pop temp 0 // void
+push pointer 0
+call Board.transpose 1
+pop temp 0 // void
+push local 0
+return
+// method int Board.pushRight
+function Board.pushRight 1
+push argument 0
+pop pointer 0
+push pointer 0
+call Board.mirror 1
+pop temp 0 // void
+push pointer 0
+call Board.pushLeft 1
+pop local 0
+push pointer 0
+call Board.mirror 1
+pop temp 0 // void
+push local 0
+return

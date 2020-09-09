@@ -1,0 +1,10 @@
+function Main.main 3
+push local 1
+call Intro.intro 1
+pop local 2
+push local 0
+push local 2
+call HangmanGame.run 2
+pop temp 0
+push constant 0
+return

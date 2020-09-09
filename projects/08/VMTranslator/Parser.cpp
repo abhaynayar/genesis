@@ -24,8 +24,8 @@ bool Parser::hasMoreCommands() {
 // read next command from the input and make it current
 void Parser::advance() {
     std::getline(infile,currentCommand);
-    // incase we take the source from another os
-    // fix crlf issue: \r remains after getline
+    // FLAW: if source is from another os "\r" remains after getline
+    // this leads to the next line being overwritten due to carriage
     if(currentCommand.back() == '\r') {
         currentCommand.pop_back();
     }

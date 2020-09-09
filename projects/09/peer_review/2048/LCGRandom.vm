@@ -1,0 +1,91 @@
+// class LCGRandom
+// function void LCGRandom.setSeed
+function LCGRandom.setSeed 0
+push argument 0
+pop static 0
+push static 0
+push constant 0
+eq
+not
+if-goto LCGRANDOM.SETSEED.IF14_ELSE
+push constant 1
+pop static 0
+goto LCGRANDOM.SETSEED.IF14_END
+label LCGRANDOM.SETSEED.IF14_ELSE
+label LCGRANDOM.SETSEED.IF14_END
+push constant 219
+pop static 1
+push constant 32749
+pop static 2
+push static 2
+push static 1
+call Math.divide 2
+pop static 3
+push static 2
+push static 1
+call Utils.mod 2
+pop static 4
+push constant 0
+return
+// function int LCGRandom.rand
+function LCGRandom.rand 1
+push static 1
+push static 0
+push static 3
+call Utils.mod 2
+call Math.multiply 2
+push static 4
+push static 0
+push static 3
+call Math.divide 2
+call Math.multiply 2
+sub
+pop local 0
+push local 0
+push constant 0
+lt
+not
+if-goto LCGRANDOM.RAND.IF15_ELSE
+push local 0
+push static 2
+add
+pop static 0
+goto LCGRANDOM.RAND.IF15_END
+label LCGRANDOM.RAND.IF15_ELSE
+push local 0
+pop static 0
+label LCGRANDOM.RAND.IF15_END
+push static 0
+return
+// function int LCGRandom.randRange
+function LCGRandom.randRange 2
+push static 2
+push argument 1
+push argument 0
+sub
+push constant 1
+add
+call Math.divide 2
+pop local 0
+call LCGRandom.rand 0
+push local 0
+call Math.divide 2
+push argument 0
+add
+pop local 1
+label LCGRANDOM.RANDRANGE.WHILE15_LOOP
+push local 1
+push argument 1
+gt
+not
+if-goto LCGRANDOM.RANDRANGE.WHILE15_END
+call LCGRandom.rand 0
+push local 0
+call Math.divide 2
+push argument 0
+add
+pop local 1
+goto LCGRANDOM.RANDRANGE.WHILE15_LOOP
+label LCGRANDOM.RANDRANGE.WHILE15_END
+push local 1
+return

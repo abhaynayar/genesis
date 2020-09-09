@@ -28,17 +28,17 @@ int main(int argc, char** argv) {
     fs::path path(arg1);
     bool isdir = false;
     std::vector<std::string> files;
+    std::cout << "arg1: " << arg1 << std::endl;
     
     if(fs::is_directory(path)) {
         isdir = true;
         for(const auto &entry : fs::directory_iterator(path)) {
             std::string vm_file(entry.path());
-            if(vm_file.substr(vm_file.find_last_of(".")+1) == "vm") {
+            if(vm_file.substr(vm_file.find_last_of(".")) == ".vm") {
                 files.push_back(entry.path());
             }
         }
     } else {
-        // ASSUMPTION: individual files have ".vm" extension
         files.push_back(path);
     }
 
@@ -112,9 +112,29 @@ int main(int argc, char** argv) {
 
         // generating outfile path
         std::ofstream outfile;
-        std::string ppath = path.parent_path();
-        std::string dirname = ppath.substr(ppath.find_last_of("/"));
-        outfile.open(ppath + dirname + ".asm");
+        std::string ppath = path.parent_path(); // x/y.asm -> x/
+
+        std::string dirname;
+        // FLAW: don't assume the path to directory contains a slash
+        // this leads to substr failing, so just take the path since
+        // no slash implies they gave you a relative path with only
+        // one folder
+        if(ppath.find_last_of("/") != -1) {
+            dirname = ppath.substr(ppath.find_last_of("/")+1);
+            std::cout << "ppath substr passed!" << std::endl;
+        } else {
+            // FLAW: since ppath will be empty
+            // make sure outfile directory is correct
+            ppath = path;
+            dirname = path;
+        }
+        
+        // debug
+        std::cout << "ppath: " << ppath << std::endl;
+        std::cout << "dirname: " << dirname << std::endl;
+        outfile.open(ppath + "/" + dirname + ".asm");
+
+        // adjusting the stack pointer and calling sys.init
         outfile << "// bootstrap code\n"
                    "@256\n"
                    "D=A\n"
@@ -173,16 +193,20 @@ int main(int argc, char** argv) {
                    "(LABEL0)\n";
 
         outfile << std::endl;
-        // ASSUMPTION: the directory contains only relevant asm files
+        
         for(const auto &entry : fs::directory_iterator(path)) {
             std::string asm_file(entry.path());
+            std::cout << "dir_file: " << asm_file << std::endl;
             if(asm_file.substr(asm_file.find_last_of(".")+1) == "asm"
                     && asm_file != ppath + dirname + ".asm") {
+                std::cout << "asm_file substr1 passed!" << std::endl;
                 
                 std::ifstream infile;
                 infile.open(asm_file);
                 outfile << "// ASM_FILE: " << 
                     asm_file.substr(asm_file.find_last_of("/")+1) << "\n";
+                std::cout << "asm_file substr2 passed!" << std::endl;
+                
                 // copy file by character
                 char ch;
                 while (infile.get(ch)) {

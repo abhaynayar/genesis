@@ -1,0 +1,12 @@
+class Main{
+
+
+function void main(){
+var HangmanGame g;
+var Intro intr;
+var String name;
+let name=intr.intro();   //INTRODUCTION OF GAME (Intro file)
+do g.run(name);          //HANGMAN GAME START (HangmanGame)
+return;
+}
+}

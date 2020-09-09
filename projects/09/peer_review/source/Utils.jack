@@ -1,0 +1,13 @@
+
+// Utility functions
+
+class Utils {
+  // returns a % b
+  function int mod(int a, int b) {
+    var int d;
+    var int r;
+    let d = Math.divide(a,b);
+    let r = a - (b * d);
+    return r;
+  }
+}
