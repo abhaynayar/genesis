@@ -10,10 +10,10 @@ class Main {
     function void main() {
         var String s;
         var String i;
-        
+/* 
         let s = String.new(0); // a zero-capacity string should be supported
         do s.dispose();
-
+*/
         let s = String.new(6); // capacity 6, make sure that length 5 is displayed
         let s = s.appendChar(97);
         let s = s.appendChar(98);
@@ -23,7 +23,7 @@ class Main {
         do Output.printString("new,appendChar: ");
         do Output.printString(s);                // new, appendChar: abcde
         do Output.println();
-    
+        
         let i = String.new(6);
         do i.setInt(12345);
         do Output.printString("setInt: ");
@@ -77,7 +77,6 @@ class Main {
         
         do i.dispose();
         do s.dispose();
-
         return;
     }
 }

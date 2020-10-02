@@ -11,33 +11,164 @@
  */
 class Screen {
 
+    static int SCREEN_BASE;
+    static boolean SCREEN_COLOR;
+    static Array bitArray;
+
     /** Initializes the Screen. */
     function void init() {
+        let SCREEN_BASE = 16384;
+        let SCREEN_COLOR = true;
+
+        // powers of two
+        let bitArray = Array.new(16);
+        let bitArray[0] = 1;
+        let bitArray[1] = 2;
+        let bitArray[2] = 4;
+        let bitArray[3] = 8;
+        let bitArray[4] = 16;
+        let bitArray[5] = 32;
+        let bitArray[6] = 64;
+        let bitArray[7] = 128;
+        let bitArray[8] = 256;
+        let bitArray[9] = 512;
+        let bitArray[10] = 1024;
+        let bitArray[11] = 2048;
+        let bitArray[12] = 4096;
+        let bitArray[13] = 8192;
+        let bitArray[14] = 16384;
+        let bitArray[15] = 16384 + 16384;
+        return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
+        return;
     }
 
     /** Sets the current color, to be used for all subsequent drawXXX commands.
      *  Black is represented by true, white by false. */
     function void setColor(boolean b) {
+        let SCREEN_COLOR = b;
+        return;
     }
 
     /** Draws the (x,y) pixel, using the current color. */
     function void drawPixel(int x, int y) {
+
+        var int address, value;
+        let address = (32*y)+(x/16);
+        let value = Memory.peek(SCREEN_BASE + address);
+
+        if (SCREEN_COLOR) {
+            let value = value | bitArray[x&15];
+        } else {
+            let value = value & ~bitArray[x&15];
+        }
+        
+        do Memory.poke(SCREEN_BASE + address, value);
+        return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
     function void drawLine(int x1, int y1, int x2, int y2) {
+        
+        var int a,b;   // Number of steps taken
+        var int diff;  // a*dy - b*dx
+        var ing dx,dy; // Delta between points
+        var int xd,yd; // Direction of movement
+
+        // We want x1 to reach x2, and y1 to reach y2
+        // Need to decide whether to move x or y at each step
+
+        let dx = x2-x1;
+        let dy = y2-y1;
+
+        if(dx<0)   { let xd = -1; }
+        else       { let xd =  1; }
+        
+        if(dy<0)   { let yd = -1; }
+        else       { let yd =  1; }
+
+        let a = 0; // Number of xd steps
+        let b = 0; // Number of yd steps
+        
+        // Special case: horizontal lines
+        if (dy=0) {
+            while(~(a=dx)) {
+                do Screen.drawPixel(x1+a,y1);
+                let a = a+xd;
+            }
+        }
+
+        // Special case: vertical lines
+        if (dx=0) {
+            while(~(b=dy)) {
+                do Screen.drawPixel(x1,y1+b);
+                let b = b+yd;
+            }
+        }
+
+        // General case: diagonal lines
+        let diff = 0;  // a*dy - b*dx
+        while (~(Math.abs(a)>Math.abs(dx)) & ~(Math.abs(b)>Math.abs(dy)))
+        {
+            do Screen.drawPixel(x1+a,y1+b);
+
+            // Decide which direction
+            if(diff<0) {
+                let a = a+xd;
+                let diff = diff + (yd*dy);
+            } else {
+                let b = b+yd;
+                let diff = diff - (xd*dx);
+            }
+        }
+
+        return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int x,y; // Current position
+        var int a,b; // Direction
+
+        if (x1>x2) { let a = -1; }
+        else       { let a =  1; }
+        
+        if (y1>y2) { let b = -1; }
+        else       { let b =  1; }
+
+
+        let x = x1;
+        while (~(x=x2)) {
+            let y = y1;
+            while(~(y=y2)) {
+                do Screen.drawPixel(x,y);
+                let y = y+b;
+            }
+            let x = x+a;
+        }
+        return;
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
+        var int ax,ay;
+        var int bx,by;
+        var int dy;
+
+        let dy = -r;
+        while(~(dy=r)) {
+            let ax = x - Math.sqrt((r*r)-(dy*dy));
+            let bx = x + Math.sqrt((r*r)-(dy*dy));
+            let ay = y + dy;
+            let by = y + dy;
+            do Screen.drawLine(ax,ay,bx,by);
+            let dy = dy+1;
+        }
+
+        return;
     }
 }

@@ -133,9 +133,7 @@ void generate_symbol_table(std::vector<std::string> &file_contents,
 
     int line_counter = 0;
     for(std::string line: file_contents) {
-
         //std::cout << line_counter << "\t" << line << std::endl;
-
         line = remove_comments(line);
         if(line != "") {
 

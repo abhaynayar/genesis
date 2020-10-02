@@ -12,53 +12,130 @@
  */
 class String {
 
+    field Array str;
+    field int length;
+
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int maxLength) {
+        let str = Array.new(maxLength);
+        let length = 0;
+        return this;
     }
 
     /** Disposes this string. */
     method void dispose() {
+        do str.dispose();
+        return;
     }
 
     /** Returns the current length of this string. */
     method int length() {
+        return length;
     }
 
     /** Returns the character at the j-th location of this string. */
     method char charAt(int j) {
+        return str[j];
     }
 
     /** Sets the character at the j-th location of this string to c. */
     method void setCharAt(int j, char c) {
+        let str[j] = c;
+        return;
     }
 
     /** Appends c to this string's end and returns this string. */
     method String appendChar(char c) {
+        let str[length] = c;
+        let length = length+1;
+        return this;
     }
 
     /** Erases the last character from this string. */
     method void eraseLastChar() {
+        let length = length-1;
+        return;
     }
 
     /** Returns the integer value of this string, 
      *  until a non-digit character is detected. */
     method int intValue() {
+        var int i, res;
+
+        let i = 0;
+        let res = 0;
+
+        // Ignoring negative sign '-'
+        if (str[0] = 45) {
+            let i = i+1;
+        }
+
+        // Assuming string only contains ASCII digits
+        while (i<length) {
+            let res = (res*10) + (str[i]-48);
+            let i = i+1;
+        }
+
+        // If first char is '-' multiply by -1
+        if (str[0] = 45) {
+            let res = res*(-1);
+        }
+        return res;
     }
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
+        var boolean isNeg;
+        var int dup, mod;
+        var int i, tmp;
+
+        let isNeg = (val<0);
+        let dup = val;
+
+        // This is a new string
+        let length = 0;
+
+        // If negative, convert to positive
+        if (isNeg) {
+            let dup = dup*(-1);
+        }
+
+        while(~(dup=0)) {
+            let mod = dup - (10*(dup/10));
+            do appendChar(mod+48);
+            let dup = dup/10;
+        }
+
+        // If negative, append '-'
+        if (isNeg) {
+            do appendChar(45);
+        }
+
+        // Reverse the string
+        let i = 0;
+        while (i < (length/2)) {
+            let tmp = str[i];
+            let str[i] = str[length-i-1];
+            let str[length-i-1] = tmp;
+            let i = i+1;
+        }
+
+        return;
     }
 
     /** Returns the new line character. */
     function char newLine() {
+        return 128;
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
+        return 129;
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
+        return 34;
     }
 }
