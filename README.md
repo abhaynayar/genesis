@@ -90,3 +90,13 @@ https://www.nand2tetris.org/
 - The project has been written in python3 and can be found under
     `projects/10/JackCompiler`
 
+### Week 12: Operating System
+
+- In this week we implementing eight operating system classes to finish
+    up out general purpose computer.
+- These classes are: Keyboard, Memory, Screen, Output, Sys, Math, Array,
+    String.
+- For now I have just implemented the simple solution for the Memory class
+    because I wasn't able to get the other version to work, but you can
+    find the incomplete code in the comments.
+
