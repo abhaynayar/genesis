@@ -1,0 +1,45 @@
+class Sys {
+    function void init() {
+        // Classes without init():
+        // - Array
+        // - String
+        // - Sys.init() is called by bootstrap
+
+        do Memory.init();
+        do Math.init();
+        do Output.init();
+        //do Screen.init();
+        //do Keyboard.init();
+
+        do Main.main();
+        do Sys.halt();
+        do Sys.wait(32767);
+        return;
+    }
+
+    function void halt() {
+        while(true) {}
+        return;
+    }
+
+    function void wait(int duration) {
+        var int i,j;
+
+        let i = 0;
+        while(i<duration) {
+            let j = 0;
+            while (j<32767) {
+                let j = j+1;
+            }
+            let i = i+1;
+        }
+
+        return;
+    }
+
+    function void error(int errorCode) {
+        do Output.printString("ERR");
+        do Output.printInt(errorCode);
+        return;
+    }
+}

@@ -1,0 +1,34 @@
+class Memory {
+    static Array ram;
+    static Array heap;
+    static Array freeList;
+
+    function void init() {
+        let ram = 0;
+        let heap = 2048;      // heapBase
+        let heap[0] = 0;      // next
+        let heap[1] = 14335;  // length
+        let freeList = heap;
+        return;
+    }
+
+    function int peek(int address) {
+        return ram[address];
+    }
+
+    function void poke(int address, int value) {
+        let ram[address] = value;
+        return;
+    }
+
+    function int alloc(int size) {
+        var int block;
+        let block = freeList;
+        let freeList = freeList + size;
+        return block;
+    }
+
+    function void deAlloc(Array o) {
+        return;
+    }    
+}

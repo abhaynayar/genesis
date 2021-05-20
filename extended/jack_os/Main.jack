@@ -1,0 +1,8 @@
+class Main {
+    function void main() {
+        do Memory.poke(20000, -1);
+        do Output.printChar("a");
+        /*while(true) {}*/
+        return;
+    }
+}

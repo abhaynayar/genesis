@@ -1,0 +1,127 @@
+class Math {
+    static int powersOfTwo;
+
+    function void init() {
+        let powersOfTwo = Array.new(16);
+        let powersOfTwo[0] = 1;
+        let powersOfTwo[1] = 2;
+        let powersOfTwo[2] = 4;
+        let powersOfTwo[3] = 8;
+        let powersOfTwo[4] = 16;
+        let powersOfTwo[5] = 32;
+        let powersOfTwo[6] = 64;
+        let powersOfTwo[7] = 128;
+        let powersOfTwo[8] = 256;
+        let powersOfTwo[9] = 512;
+        let powersOfTwo[10] = 1024;
+        let powersOfTwo[11] = 2048;
+        let powersOfTwo[12] = 4096;
+        let powersOfTwo[13] = 8192;
+        let powersOfTwo[14] = 16384;
+        let powersOfTwo[15] = 16384+16384;
+        return;
+    }
+    
+    function int twoToThe(int power) {
+        return powersOfTwo[power];
+    }
+
+    function boolean isBitSet(int x, int n) {
+        return ~((x & powersOfTwo[n]) = 0);
+    }
+    
+    function int abs(int x) {
+        if (x<0) {
+            return x*(-1);
+        }
+        return x;
+    }
+
+    function int multiply(int x, int y) {
+        var int i, sum, shiftedX;
+
+        let sum = 0;
+        let shiftedX = x;
+        
+        let i = 0;
+        while (i<16) {
+            if (Math.isBitSet(y,i)) {
+                let sum = sum + shiftedX;
+            }
+            let shiftedX = shiftedX + shiftedX;
+            let i=i+1;
+        }
+
+        return sum;
+    }
+
+    function int divide(int x, int y) {
+        var int q,r,sign,result;
+
+        let sign = ((x < 0) = (y < 0));
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+
+        if (x<y) {
+            return 0;
+        }
+
+        let q = Math.divide(x,y+y);
+        let r = 2*q*y;
+        
+        if ((x-r) < y) {
+            let result = q+q;
+        } else {
+            let result = q+q+1;
+        }
+
+        if (sign) {
+            return result;
+        }
+        return -result;
+    }
+
+    /*
+    function int sqrt(int x) {
+        var int j, y;
+        var int approx;
+        var int approx_squared;
+
+        let y = 0;
+        let j = 7;   // = (#bits/2)-1
+        while( ~(j < 0) ) {
+            let approx = y + powersOfTwo[j];
+            let approx_squared = approx * approx;
+
+            // In case of overflow:
+            if( ~(approx_squared > x) & (approx_squared > 0) ) {
+                let y = approx;
+            }
+            let j = j - 1;
+        }
+        return y;
+    }
+
+    function int mod(int x, int y) {
+        var int q;
+        
+        let q = Math.divide(x,y);
+        return x - (q*y);
+    }
+
+    function int max(int a, int b) {
+        if (a>b) {
+            return a;
+        }
+        return b;
+    }
+
+    function int min(int a, int b) {
+        if (a<b) {
+            return a;
+        }
+        return b;
+    }
+    */
+
+}
