@@ -25,10 +25,6 @@ class Math {
     function int twoToThe(int power) {
         return powersOfTwo[power];
     }
-
-    function boolean isBitSet(int x, int n) {
-        return ~((x & powersOfTwo[n]) = 0);
-    }
     
     function int abs(int x) {
         if (x<0) {
@@ -38,25 +34,43 @@ class Math {
     }
 
     function int multiply(int x, int y) {
-        var int i, sum, shiftedX;
 
+        var int ux, uy, sum; 
+
+        if (x=1) {
+            return y;
+        }
+
+        if (y=1) {
+            return x;
+        }
+
+        let ux = Math.abs(x);
+        let uy = Math.abs(y);
         let sum = 0;
-        let shiftedX = x;
-        
-        let i = 0;
-        while (i<16) {
-            if (Math.isBitSet(y,i)) {
-                let sum = sum + shiftedX;
-            }
-            let shiftedX = shiftedX + shiftedX;
-            let i=i+1;
+
+        while(ux>0) {
+            let ux=ux-1;
+            let sum=sum+y;
+        }
+
+        // If only one of x and y is negative:
+        if((y<0|x<0) & ~((y<0)&(x<0))) {
+            return -sum;
         }
 
         return sum;
     }
 
     function int divide(int x, int y) {
+
         var int q,r,sign,result;
+        
+        if (x=0) {
+            do Memory.poke(24576,1432);
+            return 0;
+        }
+        
 
         let sign = ((x < 0) = (y < 0));
         let x = Math.abs(x);
@@ -81,7 +95,6 @@ class Math {
         return -result;
     }
 
-    /*
     function int sqrt(int x) {
         var int j, y;
         var int approx;
@@ -102,6 +115,7 @@ class Math {
         return y;
     }
 
+    /*
     function int mod(int x, int y) {
         var int q;
         

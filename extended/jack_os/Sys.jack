@@ -8,12 +8,11 @@ class Sys {
         do Memory.init();
         do Math.init();
         do Output.init();
-        //do Screen.init();
-        //do Keyboard.init();
+        /*do Screen.init();*/
+        /*do Keyboard.init();*/
 
         do Main.main();
         do Sys.halt();
-        do Sys.wait(32767);
         return;
     }
 
@@ -25,13 +24,13 @@ class Sys {
     function void wait(int duration) {
         var int i,j;
 
-        let i = 0;
+        let i=0;
         while(i<duration) {
-            let j = 0;
+            let j=0;
             while (j<32767) {
-                let j = j+1;
+                let j=j+1;
             }
-            let i = i+1;
+            let i=i+1;
         }
 
         return;

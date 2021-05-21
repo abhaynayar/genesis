@@ -184,20 +184,21 @@ class Output {
     /** Displays the given character at the cursor location,
      *  and advances the cursor one column forward. */
     function void printChar(char c) {
+
         var int i, address;
         var int old, new;
         var Array map;
+        var boolean asdf;
         
         let map = Output.getMap(c);
-        
+
         let i = 0;
-        while(i < 11) {
+        while(i<11) {
             
             let address = SCREEN_BASE+(32*(i+1))+(cx/2)+(cy*32*11);
             let old = Memory.peek(address);
             
             if((cx&1) = 1) {
-                do Sys.wait(32767);
                 let old = old & 255;
                 let new = old | (map[i]*256);
             } else {
@@ -205,9 +206,8 @@ class Output {
                 let new = old | map[i];
             }
             
-            do Memory.poke(address, new);
+            do Memory.poke(address,new);
             let i=i+1;
-
         }
 
         // Advance the cursor one column forward

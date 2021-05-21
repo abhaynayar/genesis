@@ -2,7 +2,7 @@ import os
 import sys
 
 def remove_comments(x):
-    y = x.find('//')
+    y = x.find("//")
     return x[:y]
 
 #### ------------------ Error handlers --------------------- ####
@@ -14,6 +14,7 @@ def err(x):
 #### ------------------ Global variables ------------------- ####
 
 label_counter = 1 # LABEL0 is used in bootstrap
+fname = ""
 module_name = ""
 
 #### ------------------ Bootstrap code --------------------- ####
@@ -279,12 +280,6 @@ def c_arithmetic(cmd):
         # label_counter += 1
         # out += "@SP\n"
         # out += "M=M+1\n"
-        
-        # Optimization code:
-        # out += "@$RIP123\n"
-        # out += "D=A\n"
-        # out += "@$GT$\n"
-        # out += "0;JMP\n"
     
     elif cmd == "lt":
         out += "@SP\n"
@@ -363,7 +358,7 @@ def c_arithmetic(cmd):
         # out += "A=A-1\n"
         # out += "M=!M\n"
 
-    out += '\n'
+    out += "\n"
     return out
 
 def c_push(cmd, segment, index):
@@ -497,7 +492,6 @@ def c_pop(cmd, segment, index):
 
         else: err("Invalid index for pointer segment: " + index)
 
-
     elif segment == "static":
         # "@" + module_name + "." + index
         out += "@SP\n"
@@ -511,15 +505,20 @@ def c_pop(cmd, segment, index):
     out += "\n"
     return out
 
+def lgen(label):
+    if fname == "":
+        return module_name + ".asm$" + label
+    else: return fname + "$" + label
+
 def c_label(label):
-    out = "// label " + label + "\n"
-    out += "(" + label + ")\n"
+    out = "// label " + lgen(label) + "\n"
+    out += "(" + lgen(label) + ")\n"
     out += "\n"
     return out
 
 def c_goto(label):
-    out = "// goto " + label + "\n"
-    out += "@" + label + "\n"
+    out = "// goto " + lgen(label) + "\n"
+    out += "@" + lgen(label) + "\n"
     out += "0;JMP\n";
     out += "\n"
     return out
@@ -527,18 +526,20 @@ def c_goto(label):
 def c_if(label):
     # We have to pop condition on top of the stack
     # Note: true is -1, false is 0
-    out = "// if-goto " + label + "\n"
+    out = "// if-goto " + lgen(label) + "\n"
     out += "@SP\n"
-    out += "M=M-1\n"
-    out += "A=M\n"
+    out += "AM=M-1\n"
     out += "D=M\n"
-    out += "@" + label + "\n"
+    out += "@" + lgen(label) + "\n"
     out += "D;JNE\n"
     out += "\n"
     return out
 
 def c_function(function_name, num_vars):
     global label_counter
+    global fname
+
+    fname = function_name
 
     out = "// function " + function_name + " " + num_vars + "\n"
     out += "(" + function_name + ")\n"
@@ -568,15 +569,6 @@ def c_function(function_name, num_vars):
     return out
 
 def c_return():
-
-    # Optimize code:
-    # out = "// return\n"
-    # out += "@$RETURN$\n"
-    # out += "0;JMP\n"
-    # out += "\n"
-    # return out
-
-    # My code:
     out = "// return\n"
 
     # endFrame(R13) = LCL
@@ -588,18 +580,6 @@ def c_return():
     # If no arg, retAddr is overwritten
     # So we have to store it beforehand
     # retAddr(R14) = *(endFrame - 5)
-
-    # Their code:
-    # out += "@R13\n"
-    # out += "D=M\n"
-    # out += "@5\n"
-    # out += "D=D-A\n"
-    # out += "A=D\n"
-    # out += "D=M\n"
-    # out += "@RET\n"
-    # out += "M=D\n"
-
-    # My code:
     out += "@5\n"
     out += "A=D-A\n"
     out += "D=M\n"
@@ -616,13 +596,6 @@ def c_return():
     out += "M=D\n"
 
     # SP = ARG+1
-    # Their code:
-    # out += "@ARG\n"
-    # out += "D=M\n"
-    # out += "@SP\n"
-    # out += "M=D+1\n"
-
-    # My code:
     out += "D=A\n"
     out += "@SP\n"
     out += "M=D+1\n"
@@ -671,12 +644,14 @@ def c_call(function_name, num_args):
     # push retAddr
     out += "@LABEL" + str(label_counter) + "\n"
     out += "D=A\n"
+    # Code to push D on the stack:
     out += "@SP\n"
     out += "A=M\n"
     out += "M=D\n"
     out += "@SP\n"
     out += "M=M+1\n"
 
+    # Code to build the stack frame:
     # push LCL
     out += "@LCL\n"
     out += "D=M\n"
@@ -735,9 +710,9 @@ def c_call(function_name, num_args):
 
     # (retAddr)
     out += "(LABEL" + str(label_counter) + ")\n"
-    label_counter += 1
-
     out += "\n"
+    
+    label_counter += 1
     return out
 
 def main():
@@ -747,11 +722,13 @@ def main():
     arg1 = sys.argv[1]
     vm_file_paths = []
 
+    final_output = open("out.asm", "w")
 
     if os.path.isdir(arg1) == True: # If it is a directory
+        final_output.write(bootstrap) # Write bootstrap if directory
         for f in os.listdir(arg1):  # Traverse throught the directory
             if f.endswith(".vm"):   # Add all .vm files to a list
-                # Need arg1 and '/' for some relative paths
+                # Need arg1 and "/" for some relative paths
                 vm_file_paths.append(arg1+"/"+f)
     
     elif os.path.isfile(arg1):           # Else if it is a file
@@ -761,10 +738,8 @@ def main():
     if vm_file_paths == []: # Exit if we can't find any .vm files
         err("Invalid input file or directory")
 
-    final_output = open("out.asm", "w")
-    final_output.write(bootstrap)
 
-    global module_name # Forgot to add this, caused troubles ;)
+    global module_name # Forgot to add this, caused a lot of trouble ;)
 
     for vm_file_path in vm_file_paths:
 
