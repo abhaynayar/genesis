@@ -19,7 +19,6 @@ class Emu:
     ra = 0
     rd = 0
     rm = 0
-        
     rom = []
     ram = []
 
@@ -44,16 +43,15 @@ class Emu:
     
         # if address>=0x4000 and address<0x6000:
         screen_address = address - 0x4000
-        if screen_address<0: return
+        if screen_address < 0: return
         
         x = int(screen_address % 32)
         y = int(screen_address / 32)
         for i in range(15,-1,-1):
             set1 = value & (1<<i)
-            if (set1 != 0): screen.fill(black, (((x*16)+i, y),(1,1)))
-            else: screen.fill(white, (((x*16)+i, y),(1,1)))
-        
-        pygame.display.update()
+            if (set1 != 0): screen.set_at(((x*16)+i, y), black)
+            else: screen.set_at(((x*16)+i, y), white)
+        pygame.display.flip()
     
     def get_comp_res(self, comp):
         if comp == 0x2a: return 0
@@ -85,6 +83,10 @@ class Emu:
         if comp == 0x47: return self.rm-self.rd
         if comp == 0x40: return self.rd&self.rm
         if comp == 0x55: return self.rd|self.rm
+
+        #heinz
+        if comp == 0x41: return self.rm*self.rd
+        if comp == 0x43: return int(self.rm/self.rd)
     
     def dest_res(self, dest, comp_res):
         if dest == 1: self.store_ram(self.ra, comp_res)

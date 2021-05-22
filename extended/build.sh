@@ -11,6 +11,6 @@ python3 vm_translator.py jack_os/
 python3 assembler.py out.asm #> dbg.asm
 
 # Output: out.asm, out.hack
-#wc -l out.hack
+wc -l out.hack
 
 python3 cpu_emulator.py

@@ -466,8 +466,8 @@ class CompilationEngine:
     #       varName '[' expression ']' | subroutineCall | '(' expression 
     #       ')' | unaryOp term
     def compileTerm(self):
-        ans = ''
         
+        ans = ''
         # integerConstant
         if self.tokenType[self.i] == 'integerConstant':
             self.vm.writePush('constant', self.tokens[self.i])

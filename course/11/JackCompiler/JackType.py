@@ -25,8 +25,10 @@ op_vm = {
     '-': 'sub',
     '|': 'or',
     '=': 'eq',
-    '*': 'call Math.multiply 2',
-    '/': 'call Math.divide 2',
+    # '*': 'call Math.multiply 2',
+    '*': 'mul', #heinz
+    # '/': 'call Math.divide 2',
+    '/': 'div', #heinz
     '&gt;': 'gt',
     '&lt;': 'lt',
     '&amp;': 'and',

@@ -79,71 +79,71 @@ bootstrap += "\n\n\n"
 
 
 #### ----------------- Optimizing return ----------------- ####
-# bootstrap += "// return common code\n"
-# bootstrap += "($RETURN$)\n"
+bootstrap += "// return common code\n"
+bootstrap += "($RETURN$)\n"
 
-# # endFrame(R13) = LCL
-# bootstrap += "@LCL\n"
-# bootstrap += "D=M\n"
-# bootstrap += "@R13\n"
-# bootstrap += "M=D\n"
+# endFrame(R13) = LCL
+bootstrap += "@LCL\n"
+bootstrap += "D=M\n"
+bootstrap += "@R13\n"
+bootstrap += "M=D\n"
 
-# # If no arg, retAddr is overwritten
-# # So we have to store it beforehand
-# # retAddr(R14) = *(endFrame - 5)
-# bootstrap += "@5\n"
-# bootstrap += "A=D-A\n"
-# bootstrap += "D=M\n"
-# bootstrap += "@R14\n"
-# bootstrap += "M=D\n"
+# If no arg, retAddr is overwritten
+# So we have to store it beforehand
+# retAddr(R14) = *(endFrame - 5)
+bootstrap += "@5\n"
+bootstrap += "A=D-A\n"
+bootstrap += "D=M\n"
+bootstrap += "@R14\n"
+bootstrap += "M=D\n"
 
-# # *ARG = pop()
-# bootstrap += "@SP\n"
-# bootstrap += "M=M-1\n"
-# bootstrap += "A=M\n"
-# bootstrap += "D=M\n"
-# bootstrap += "@ARG\n"
-# bootstrap += "A=M\n"
-# bootstrap += "M=D\n"
+# *ARG = pop()
+bootstrap += "@SP\n"
+bootstrap += "M=M-1\n"
+bootstrap += "A=M\n"
+bootstrap += "D=M\n"
+bootstrap += "@ARG\n"
+bootstrap += "A=M\n"
+bootstrap += "M=D\n"
 
-# # SP = ARG+1
-# bootstrap += "D=A\n"
-# bootstrap += "@SP\n"
-# bootstrap += "M=D+1\n"
+# SP = ARG+1
+bootstrap += "D=A\n"
+bootstrap += "@SP\n"
+bootstrap += "M=D+1\n"
 
-# # THAT = *(endFrame - 1)
-# bootstrap += "@R13\n"
-# bootstrap += "AM=M-1\n"
-# bootstrap += "D=M\n"
-# bootstrap += "@THAT\n"
-# bootstrap += "M=D\n"
+# THAT = *(endFrame - 1)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@THAT\n"
+bootstrap += "M=D\n"
 
-# # THIS = *(endFrame - 2)
-# bootstrap += "@R13\n"
-# bootstrap += "AM=M-1\n"
-# bootstrap += "D=M\n"
-# bootstrap += "@THIS\n"
-# bootstrap += "M=D\n"
+# THIS = *(endFrame - 2)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@THIS\n"
+bootstrap += "M=D\n"
 
-# # ARG = *(endFrame - 3)
-# bootstrap += "@R13\n"
-# bootstrap += "AM=M-1\n"
-# bootstrap += "D=M\n"
-# bootstrap += "@ARG\n"
-# bootstrap += "M=D\n"
+# ARG = *(endFrame - 3)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@ARG\n"
+bootstrap += "M=D\n"
 
-# # LCL = *(endFrame - 4)
-# bootstrap += "@R13\n"
-# bootstrap += "AM=M-1\n"
-# bootstrap += "D=M\n"
-# bootstrap += "@LCL\n"
-# bootstrap += "M=D\n"
+# LCL = *(endFrame - 4)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@LCL\n"
+bootstrap += "M=D\n"
 
-# # goto retAddr
-# bootstrap += "@R14\n"
-# bootstrap += "A=M\n"
-# bootstrap += "0;JMP\n"
-# bootstrap += "\n\n\n"
+# goto retAddr
+bootstrap += "@R14\n"
+bootstrap += "A=M\n"
+bootstrap += "0;JMP\n"
+bootstrap += "\n\n\n"
 
 
 ##### ----------------- Optimizing gt ----------------- ####
@@ -188,6 +188,28 @@ def register_name(segment):
 def c_arithmetic(cmd):
     global label_counter
     out = "// " + cmd + "\n"
+
+    # heinz
+    if cmd == "mul":
+        out += "@SP\n"
+        out += "A=M\n"
+        out += "A=A-1\n"
+        out += "D=M\n"
+        out += "A=A-1\n"
+        out += "M=M*D\n"
+        out += "@SP\n"
+        out += "M=M-1\n"
+    
+    # heinz
+    if cmd == "div":
+        out += "@SP\n"
+        out += "A=M\n"
+        out += "A=A-1\n"
+        out += "D=M\n"
+        out += "A=A-1\n"
+        out += "M=M/D\n"
+        out += "@SP\n"
+        out += "M=M-1\n"
 
     if cmd == "add":
         out += "@SP\n"
@@ -766,7 +788,8 @@ def main():
 
             asm_line = ""
 
-            if cmd in ["add","sub","neg","and","or","not","eq","gt","lt"]:
+            if cmd in ["add", "sub", "neg", "and", "or", "not", "eq", \
+                    "gt", "lt", "mul", "div"]: #heinz
                 asm_line = c_arithmetic(cmd)
             elif cmd == "push":     asm_line = c_push(cmd, arg1, arg2)
             elif cmd == "pop":      asm_line = c_pop(cmd, arg1, arg2)

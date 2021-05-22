@@ -151,6 +151,10 @@ def main():
     comp_map["D&M"] = "1000000"
     comp_map["D|M"] = "1010101"
 
+    #heinz
+    comp_map["M*D"] = "1000001"
+    comp_map["M/D"] = "1000011"
+
     dest_map[""] = "000"
     dest_map["M"] = "001"
     dest_map["D"] = "010"
