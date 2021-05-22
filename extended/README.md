@@ -11,6 +11,12 @@ Implementing this in an emulator is extremely simple. All we need to do is add
 another instruction, something like `D=D*A` and then integrate it upwards into
 the stack.
 
+## Implement CPU emulator as actual hardware
+
+Currently, we are looking at the instructions and mapping them to the known
+instructions in the specification. Eventually, I want the CPU emulator to act
+like real hardware. With buses and wires representing the actual CPU.
+
 ## Implement drivers for storage systems
 
 ROM size isn't enough if we want to move forward. We need to start connecting
@@ -25,7 +31,7 @@ memory mapped as well. Or, we can do some more research on how IO-mapped devices
 work and implemented those. I would suggest IO-mapped, since at some point we
 want to stop using our RAM for this stuff. Maybe we can shift our screen and
 keyboard off the RAM later on as well using this. It will allow us to have a
-larger/colored screen with hogging all the RAM.
+larger/colored screen without hogging all the RAM.
 
 ----
 
@@ -47,9 +53,9 @@ godforsaken low-level nightmare. Some of them I have written below. At this
 level, you have to be creative, since you can't just `print("HERE!!!!" + x)`.
 
 Ultimately I figured that the bug was in the implementation of `if-goto` in the
-VM translator. I had already been suspicious about that before, but as before,
-I check the implementation, which was simple and I saw other's people code
-online and it seemed that there was nothing wrong.
+VM translator. I had already been suspicious about that before, but I checked
+the implementation. It was simple, and I saw other's people code online and it
+seemed that there was nothing wrong.
 
 Finally, today, I was going through the VM code and I pin-pointed exactly the
 place where the program went to shit using one of my "creative" debugging
