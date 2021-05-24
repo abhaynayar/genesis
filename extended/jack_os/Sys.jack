@@ -8,8 +8,8 @@ class Sys {
         do Memory.init();
         do Math.init();
         do Output.init();
-        /*do Screen.init();*/
-        /*do Keyboard.init();*/
+        do Screen.init();
+        do Keyboard.init();
 
         do Main.main();
         do Sys.halt();

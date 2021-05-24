@@ -685,25 +685,43 @@ def main():
     arg1 = sys.argv[1]
     vm_file_paths = []
 
-    final_output = open("out.asm", "w")
+    # Generating path for output file
+    outpath = ""
+
+    if arg1.endswith(".vm"):
+        outpath = arg1[:-3] + ".asm"
+    elif arg1.endswith("/"):
+        outpath = arg1 + "out.asm"
+    else: outpath = arg1 + "/out.asm"
+
+    final_output = open(outpath, "w")
 
     if os.path.isdir(arg1) == True: # If it is a directory
-        final_output.write(bootstrap) # Write bootstrap if directory
-        for f in os.listdir(arg1):  # Traverse throught the directory
+        final_output.write(bootstrap) # Write bootstrap
+        for f in os.listdir(arg1):  # Traverse through the directory
             if f.endswith(".vm"):   # Add all .vm files to a list
                 # Need arg1 and "/" for some relative paths
                 vm_file_paths.append(arg1+"/"+f)
     
     elif os.path.isfile(arg1):           # Else if it is a file
-        if arg1.endswith(".vm"):         # If it is a .vm file
-            vm_file_paths.append(arg1)   # Append it to the list
+        if arg1.endswith(".vm"):
+            final_output = open(sys.argv[1][:-3] + ".asm", "w")
+            vm_file_paths.append(arg1)
 
     if vm_file_paths == []: # Exit if we can't find any .vm files
         err("Invalid input file or directory")
 
+    # Hardcoding OS files:
+    vm_file_paths.append("jack_os/Array.vm")
+    vm_file_paths.append("jack_os/Math.vm")
+    vm_file_paths.append("jack_os/Output.vm")
+    vm_file_paths.append("jack_os/String.vm")
+    vm_file_paths.append("jack_os/Keyboard.vm")
+    vm_file_paths.append("jack_os/Memory.vm")
+    vm_file_paths.append("jack_os/Screen.vm")
+    vm_file_paths.append("jack_os/Sys.vm")
 
     global module_name # Forgot to add this, caused a lot of trouble ;)
-
     for vm_file_path in vm_file_paths:
 
         filename_without_extension = vm_file_path[:-3]

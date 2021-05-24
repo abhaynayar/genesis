@@ -1,17 +1,19 @@
+# Choose directory in test/ to run
 choose="Hello"
 
-# Compiler
-python3 compiler/JackCompiler.py jack_os/$choose/
+# Compiling Jack OS
+python3 compiler/JackCompiler.py jack_os/
 
-# VM Translator
-python3 translator.py jack_os/$choose/
+# Compiling test code
+python3 compiler/JackCompiler.py test/$choose/
 
-# Assembler
-python3 assembler.py out.asm #> dbg.asm
+# Translating test code (and hardcoded Jack OS)
+python3 vm.py test/$choose/
 
-# Output: out.asm, out.hack
-wc -l out.hack
+# Assembling test code
+python3 asm.py test/$choose/out.asm
+wc -l test/$choose/out.hack
 
 # CPU Emulator
-python3 emulator.py out.hack & # Python
-n2t_emu/target/debug/n2t_emu out.hack # Rust
+#python3 emu.py test/$choose/out.hack
+rs_emu/target/release/n2t_emu test/$choose/out.hack

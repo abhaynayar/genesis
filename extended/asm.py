@@ -28,8 +28,6 @@ def main():
     input_file = open(arg1, "r")
     input_code = input_file.readlines()
 
-
-
     ############# Generating Symbolic Code ##############
 
     # 1. Predefined symbols
@@ -175,7 +173,7 @@ def main():
 
     ############# Symbolic to Machine Code ##############
 
-    out_file = open("out.hack", "w")
+    out_file = open(sys.argv[1][:-4] + ".hack", "w")
 
     for line_with_comments in input_code:
         line_with_labels = remove_comments(line_with_comments)

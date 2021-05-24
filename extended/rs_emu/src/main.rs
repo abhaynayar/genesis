@@ -93,7 +93,7 @@ fn main() -> Result<(), Error> {
             let now = Instant::now();
             let dt = now.duration_since(time);
             
-            let one_frame = Duration::new(0, 100_000_000);
+            let one_frame = Duration::new(0, 75_000_000);
             if dt > one_frame {
                 time = now;
                 window.request_redraw();

@@ -1,12 +1,9 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/12/Math.jack
-
 /**
  * A library of commonly used mathematical functions.
- * Note: Jack compilers implement multiplication and division using OS method calls.
+ * Note: Jack compilers now implements multiplication and division using
+ *       Hack instruction set.
  */
+
 class Math {
     static Array bitArray;
     /* Initializes the library. */
@@ -41,27 +38,8 @@ class Math {
         return x;
     }
 
-    /** Returns the product of x and y. 
-     *  When a Jack compiler detects the multiplication operator '*' in the 
-     *  program's code, it handles it by invoking this method. In other words,
-     *  the Jack expressions x*y and multiply(x,y) return the same value.
-     */
-    function int multiply(int x, int y) {
-        
-        var int i, sum, shiftedX;
-        let sum = 0;
-        let shiftedX = x;
-        
-        let i = 0;
-        while (i<16) {
-            if (Math.bitExtract(y,i) = 1) {
-                let sum = sum + shiftedX;
-            }
-            let shiftedX = shiftedX + shiftedX;
-            let i = i+1;
-        }
-
-        return sum;
+    function int twoToThe(int x) {
+        return bitArray[x];
     }
 
     /** Returns i'th bit of x */    
@@ -72,38 +50,6 @@ class Math {
         return 1;
     }
 
-    /** Returns the integer part of x/y.
-     *  When a Jack compiler detects the multiplication operator '/' in the 
-     *  program's code, it handles it by invoking this method. In other words,
-     *  the Jack expressions x/y and divide(x,y) return the same value.
-     */
-    function int divide(int x, int y) {
-        var int q,r,sign,result;
-
-        // if x and y have same sign => positive
-        let sign = ((x < 0) = (y < 0));
-
-        let x = Math.abs(x);
-        let y = Math.abs(y);
-
-        if (x<y) {
-            return 0;
-        }
-
-        let q = Math.divide(x,y+y);
-        let r = 2*q*y;
-        
-        if ((x-r) < y) {
-            let result = q+q;
-        } else {
-            let result = q+q+1;
-        }
-
-        if (sign) {
-            return result;
-        }
-        return -result;
-    }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {

@@ -1,0 +1,15 @@
+class Main {
+    function void main() {
+        do Output.printString("Hello, world!");
+        do Output.println();
+
+        do Output.printString("What's up????");
+        do Output.printInt(482*2);
+
+        //do Screen.setColor(false);
+        do Screen.drawRectangle(10,10,100,100);
+        do Screen.clearScreen();
+
+        return;
+    }
+}
