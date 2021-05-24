@@ -1,6 +1,5 @@
 class Main {
     function void main() {
-        do Output.printInt(1*2);
         do Output.printString("Hello, world!");
         return;
     }

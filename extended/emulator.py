@@ -1,3 +1,4 @@
+import sys
 import pygame
 import struct
 import ctypes
@@ -27,7 +28,7 @@ class Emu:
             self.rom.append(0)
             self.ram.append(0)
 
-        infile = open('out.hack').readlines()
+        infile = open(sys.argv[1]).readlines()
         for i,line in enumerate(infile):
             self.rom[i] = int(line,2)
 

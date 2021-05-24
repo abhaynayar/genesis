@@ -173,9 +173,6 @@ def main():
     jump_map["JLE"] = "110"
     jump_map["JMP"] = "111"
 
-
-
-
     ############# Symbolic to Machine Code ##############
 
     out_file = open("out.hack", "w")

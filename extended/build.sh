@@ -1,16 +1,17 @@
+choose="Hello"
+
 # Compiler
-#../tools/JackCompiler.sh jack_os/
-python3 ../course/11/JackCompiler/JackCompiler.py jack_os/
+python3 compiler/JackCompiler.py jack_os/$choose/
 
 # VM Translator
-# They don't provide a VM translator
-python3 vm_translator.py jack_os/
+python3 translator.py jack_os/$choose/
 
 # Assembler
-#../tools/Assembler.sh out.asm && wc -l out.hack
 python3 assembler.py out.asm #> dbg.asm
 
 # Output: out.asm, out.hack
 wc -l out.hack
 
-python3 cpu_emulator.py
+# CPU Emulator
+python3 emulator.py out.hack & # Python
+n2t_emu/target/debug/n2t_emu out.hack # Rust

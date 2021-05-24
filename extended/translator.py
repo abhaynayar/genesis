@@ -77,7 +77,6 @@ bootstrap += "0;JMP\n"
 bootstrap += "(LABEL0)\n";
 bootstrap += "\n\n\n"
 
-
 #### ----------------- Optimizing return ----------------- ####
 bootstrap += "// return common code\n"
 bootstrap += "($RETURN$)\n"
@@ -172,6 +171,73 @@ bootstrap += "\n\n\n"
 # bootstrap += "@SP\n"
 # bootstrap += "M=M+1\n"
 
+# SP = ARG+1
+bootstrap += "D=A\n"
+bootstrap += "@SP\n"
+bootstrap += "M=D+1\n"
+
+# THAT = *(endFrame - 1)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@THAT\n"
+bootstrap += "M=D\n"
+
+# THIS = *(endFrame - 2)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@THIS\n"
+bootstrap += "M=D\n"
+
+# ARG = *(endFrame - 3)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@ARG\n"
+bootstrap += "M=D\n"
+
+# LCL = *(endFrame - 4)
+bootstrap += "@R13\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@LCL\n"
+bootstrap += "M=D\n"
+
+# goto retAddr
+bootstrap += "@R14\n"
+bootstrap += "A=M\n"
+bootstrap += "0;JMP\n"
+bootstrap += "\n\n\n"
+
+"""
+#### ----------------- Optimizing gt ----------------- ####
+
+bootstrap += "@SP\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M\n"
+bootstrap += "@SP\n"
+bootstrap += "AM=M-1\n"
+bootstrap += "D=M-D\n"
+bootstrap += "@LABEL" + str(label_counter) + "\n"
+label_counter += 1
+bootstrap += "D;JGT\n"
+bootstrap += "@SP\n"
+bootstrap += "A=M\n"
+bootstrap += "M=0\n"
+bootstrap += "@LABEL" + str(label_counter) + "\n"
+label_counter -= 1
+bootstrap += "0;JMP\n"
+bootstrap += "(LABEL" + str(label_counter) + ")\n"
+label_counter += 1
+bootstrap += "@SP\n"
+bootstrap += "A=M\n"
+bootstrap += "M=-1\n"
+bootstrap += "(LABEL" + str(label_counter) + ")\n"
+label_counter += 1
+bootstrap += "@SP\n"
+bootstrap += "M=M+1\n"
+"""
 
 #### ----------------- Mapping functions ------------------- ####
 
@@ -188,28 +254,6 @@ def register_name(segment):
 def c_arithmetic(cmd):
     global label_counter
     out = "// " + cmd + "\n"
-
-    # heinz
-    if cmd == "mul":
-        out += "@SP\n"
-        out += "A=M\n"
-        out += "A=A-1\n"
-        out += "D=M\n"
-        out += "A=A-1\n"
-        out += "M=M*D\n"
-        out += "@SP\n"
-        out += "M=M-1\n"
-    
-    # heinz
-    if cmd == "div":
-        out += "@SP\n"
-        out += "A=M\n"
-        out += "A=A-1\n"
-        out += "D=M\n"
-        out += "A=A-1\n"
-        out += "M=M/D\n"
-        out += "@SP\n"
-        out += "M=M-1\n"
 
     if cmd == "add":
         out += "@SP\n"
@@ -248,18 +292,17 @@ def c_arithmetic(cmd):
         out += "D;JEQ\n"
         out += "D=1\n"
         out += "(LABEL" + str(label_counter) + ")\n"
-        label_counter += 1
         out += "D=D-1\n"
         out += "@SP\n"
         out += "A=M\n"
         out += "M=D\n"
         out += "@SP\n"
         out += "M=M+1\n"
+        label_counter += 1
     
     elif cmd == "gt":
         out += "@SP\n"
-        out += "M=M-1\n"
-        out += "A=M\n"
+        out += "AM=M-1\n"
         out += "D=M\n"
         out += "A=A-1\n"
         out += "D=M-D\n"
@@ -276,37 +319,10 @@ def c_arithmetic(cmd):
         out += "M=-1\n"
         out += "(LABEL" + str(label_counter+1) + ")\n"
         label_counter += 2
-        
-        # My code:
-        # out += "@SP\n"
-        # out += "AM=M-1\n"
-        # out += "D=M\n"
-        # out += "@SP\n"
-        # out += "AM=M-1\n"
-        # out += "D=M-D\n"
-        # out += "@LABEL" + str(label_counter) + "\n"
-        # label_counter += 1
-        # out += "D;JGT\n"
-        # out += "@SP\n"
-        # out += "A=M\n"
-        # out += "M=0\n"
-        # out += "@LABEL" + str(label_counter) + "\n"
-        # label_counter -= 1
-        # out += "0;JMP\n"
-        # out += "(LABEL" + str(label_counter) + ")\n"
-        # label_counter += 1
-        # out += "@SP\n"
-        # out += "A=M\n"
-        # out += "M=-1\n"
-        # out += "(LABEL" + str(label_counter) + ")\n"
-        # label_counter += 1
-        # out += "@SP\n"
-        # out += "M=M+1\n"
     
     elif cmd == "lt":
         out += "@SP\n"
-        out += "M=M-1\n"
-        out += "A=M\n"
+        out += "AM=M-1\n"
         out += "D=M\n"
         out += "A=A-1\n"
         out += "D=M-D\n"
@@ -323,28 +339,6 @@ def c_arithmetic(cmd):
         out += "M=-1\n"
         out += "(LABEL" + str(label_counter+1) + ")\n"
         label_counter += 2
-
-        # out += "@SP\n"
-        # out += "AM=M-1\n"
-        # out += "D=M\n"
-        # out += "@SP\n"
-        # out += "AM=M-1\n"
-        # out += "D=M-D\n"
-        # out += "@LABEL" + str(label_counter) + "\n"
-        # out += "D;JLT\n"
-        # out += "@SP\n"
-        # out += "A=M\n"
-        # out += "M=0\n"
-        # out += "@LABEL" + str(label_counter+1) + "\n"
-        # out += "0;JMP\n"
-        # out += "(LABEL" + str(label_counter) + ")\n"
-        # out += "@SP\n"
-        # out += "A=M\n"
-        # out += "M=-1\n"
-        # out += "(LABEL" + str(label_counter+1) + ")\n"
-        # out += "@SP\n"
-        # out += "M=M+1\n"
-        # label_counter += 2
 
     elif cmd == "and":
         out += "@SP\n"
@@ -368,17 +362,30 @@ def c_arithmetic(cmd):
     
     elif cmd == "not":
         out += "@SP\n"
-        out += "M=M-1\n"
         out += "A=M\n"
+        out += "A=A-1\n"
         out += "M=!M\n"
-        out += "@SP\n"
-        out += "M=M+1\n"
 
-        # My code:
-        # out += "@SP\n"
-        # out += "A=M\n"
-        # out += "A=A-1\n"
-        # out += "M=!M\n"
+    #heinz
+    elif cmd == "mul":
+        out += "@SP\n"
+        out += "A=M\n"
+        out += "A=A-1\n"
+        out += "D=M\n"
+        out += "A=A-1\n"
+        out += "M=M*D\n"
+        out += "@SP\n"
+        out += "M=M-1\n"
+    
+    elif cmd == "div":
+        out += "@SP\n"
+        out += "A=M\n"
+        out += "A=A-1\n"
+        out += "D=M\n"
+        out += "A=A-1\n"
+        out += "M=M/D\n"
+        out += "@SP\n"
+        out += "M=M-1\n"
 
     out += "\n"
     return out
@@ -472,8 +479,7 @@ def c_pop(cmd, segment, index):
         out += "@R13\n"
         out += "M=D\n"      # addr = segment + index
         out += "@SP\n"
-        out += "M=M-1\n"    # SP--
-        out += "A=M\n"
+        out += "AM=M-1\n"   # SP--
         out += "D=M\n"      # D = *SP
         out += "@R13\n"
         out += "A=M\n"      # A = *(segment+index)
@@ -487,8 +493,7 @@ def c_pop(cmd, segment, index):
         out += "@R13\n"
         out += "M=D\n"
         out += "@SP\n"
-        out += "M=M-1\n"
-        out += "A=M\n"
+        out += "AM=M-1\n"
         out += "D=M\n"
         out += "@R13\n"
         out += "A=M\n"
@@ -498,16 +503,14 @@ def c_pop(cmd, segment, index):
     elif segment == "pointer":
         if index == "0": #THIS
             out += "@SP\n"
-            out += "M=M-1\n"
-            out += "A=M\n"
+            out += "AM=M-1\n"
             out += "D=M\n"
             out += "@THIS\n"
             out += "M=D\n"
 
         elif index == "1": #THAT
             out += "@SP\n"
-            out += "M=M-1\n"
-            out += "A=M\n"
+            out += "AM=M-1\n"
             out += "D=M\n"
             out += "@THAT\n"
             out += "M=D\n"
@@ -592,72 +595,10 @@ def c_function(function_name, num_vars):
 
 def c_return():
     out = "// return\n"
-
-    # endFrame(R13) = LCL
-    out += "@LCL\n"
-    out += "D=M\n"
-    out += "@R13\n"
-    out += "M=D\n"
-
-    # If no arg, retAddr is overwritten
-    # So we have to store it beforehand
-    # retAddr(R14) = *(endFrame - 5)
-    out += "@5\n"
-    out += "A=D-A\n"
-    out += "D=M\n"
-    out += "@R14\n"
-    out += "M=D\n"
-
-    # *ARG = pop()
-    out += "@SP\n"
-    out += "M=M-1\n"
-    out += "A=M\n"
-    out += "D=M\n"
-    out += "@ARG\n"
-    out += "A=M\n"
-    out += "M=D\n"
-
-    # SP = ARG+1
-    out += "D=A\n"
-    out += "@SP\n"
-    out += "M=D+1\n"
-
-    # THAT = *(endFrame - 1)
-    out += "@R13\n"
-    out += "AM=M-1\n"
-    out += "D=M\n"
-    out += "@THAT\n"
-    out += "M=D\n"
-
-    # THIS = *(endFrame - 2)
-    out += "@R13\n"
-    out += "AM=M-1\n"
-    out += "D=M\n"
-    out += "@THIS\n"
-    out += "M=D\n"
-
-    # ARG = *(endFrame - 3)
-    out += "@R13\n"
-    out += "AM=M-1\n"
-    out += "D=M\n"
-    out += "@ARG\n"
-    out += "M=D\n"
-
-    # LCL = *(endFrame - 4)
-    out += "@R13\n"
-    out += "AM=M-1\n"
-    out += "D=M\n"
-    out += "@LCL\n"
-    out += "M=D\n"
-
-    # goto retAddr
-    out += "@R14\n"
-    out += "A=M\n"
+    out += "@$RETURN$\n"
     out += "0;JMP\n"
-
     out += "\n"
     return out
-
 
 def c_call(function_name, num_args):
     global label_counter
