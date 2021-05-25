@@ -8,12 +8,13 @@ python3 compiler/JackCompiler.py jack_os/
 python3 compiler/JackCompiler.py test/$choose/
 
 # Translating test code (and hardcoded Jack OS)
-python3 vm.py test/$choose/
+python3 translator.py test/$choose/
 
 # Assembling test code
-python3 asm.py test/$choose/out.asm
+python3 assembler.py test/$choose/out.asm
 wc -l test/$choose/out.hack
 
 # CPU Emulator
-#python3 emu.py test/$choose/out.hack
-rs_emu/target/release/n2t_emu test/$choose/out.hack
+emulator/rs_emu/target/release/n2t_emu test/$choose/out.hack
+#emulator/cc_emu/cc_emu test/$choose/out.hack
+#python3 emulator/emu.py test/$choose/out.hack

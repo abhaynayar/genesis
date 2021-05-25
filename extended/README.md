@@ -1,4 +1,9 @@
 # Extending the platfrom
+
+## Optimize clear screen
+
+TBD
+
 ## Reduce the size of the ROM code
 
 We can only have 32768 lines of Hack assembly in the ROM. Eventually we wan't to

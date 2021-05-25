@@ -67,7 +67,6 @@ fn main() -> Result<(), Error> {
         }
         
         if let Event::RedrawRequested(_) = event {
-            
             emu.draw(pixels.get_frame());
             
             if pixels

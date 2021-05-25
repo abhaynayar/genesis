@@ -5,8 +5,8 @@ authors = ["Abhay Nayar <abhaynayar@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-time = "*"
 log = "0.4.8"
+time = "0.2.26"
 
 env_logger = "0.7.1"
 pixels = "0.2.0"

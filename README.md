@@ -10,15 +10,27 @@ https://www.nand2tetris.org/
 
 After finishing the course, I was interested in extending this platform further.
 All the development beyond the course is going on in the `extended/` directory.
-You can run the understand the build pipline by reading `build.sh` in the
-`extended/` directory. The extended directory also contains a README file which
-consists of various plans and approaches being used. At the moment, the
-development is ad hoc.
+You can understand the build pipline by reading `build.sh` in the `extended/`
+directory. The extended directory also contains a README file which consists of
+various plans and approaches being used. At the moment, the development is ad
+hoc.
 
 To start, I first had to make sure that the entire stack: from the high-level
 programming language down to the CPU was available in code and working. The
 course developers don't provide a VM translator. For this, I developed the
 entire stack including the compiler, VM translator, and the assembler in Python.
+
+### Features
+
+- Multiply and divide in CPU
+
+### To be implemented
+
+- Optimize graphics library in OS
+- von Neumann architecture
+- Video memory for screen
+- External storage
+- File system
 
 ### Compatibility
 
@@ -28,40 +40,39 @@ extended directory will not work on the original Hack platform.
 
 ### Requirements
 
-You need python3 and pygame (for the emulator). If you intend to use the Rust
-CPU emulator, you will also need to install the Rust toolchain. The Python-based
-CPU emulator is slow but sufficient for non-intensive tasks (contributions to
-optimize it are much appreciated).
+Tested on Ubuntu 20.04. For the compilation, translation and assembling of Jack
+programs, you will need python3.
+
+We have three CPU emulators in the `extended/emulators` directory. Each of them
+has different requirements. I am currently using the Rust-based CPU emulator for
+which you will need to [install Rust](https://www.rust-lang.org/tools/install).
 
 ### Build
 
 Go to the `extended/` directory.
 
-Configuring `build.sh`:
+#### Configuring `build.sh`
 
 Configure the build script by setting the `$choose` variable. This variable
 decides which directory is to be built in the `test` directory. For example if
 the variable is set to "Pong" it will compile all the Jack files in `test/Pong`.
+By default it will run the "Hello" program which prints a string on the screen.
 
-The code to use the CPU emulator is given in the build script. To use the Rust
-emulator, run `cargo build --release` in `rs_emu` directory. If you can't use
-the Rust emulator, you can use the Python emulator `emu.py` just uncomment the
-respective line in `build.sh`.
+The code to choose the CPU emulator is given in the build script. Just uncomment
+the line for the emulator you want to use (at the end of the script). I
+recommend using the Rust emulator:
 
-Run `./build.sh`:
+- Rust emulator: build by running `$ cargo build --release` in the
+  `emulators/rs_emu` directory. You will need SDL for this and C++.
+- C++ emulator: build by running `$ make` in the `emulators/cc_emu` directory.
+- Python emulator: configure build script to use `emulators/emu.py`.
+
+#### Running `./build.sh`
 
 - Compiles the `*.jack` files in the `jack_os/$choose` directory.
 - Translates the VM code to Hack assembly.
-- Assembles the Hack code to machine language.
+- Assembles the Hack code to machine code.
 - Runs the machine code on the chosen CPU emulator.
-
-### Features
-
-- [ ] von Neumann architecture
-- [ ] Video memory for screen
-- [ ] External storage
-- [ ] File system
-- [x] Multiply and divide in the CPU emulator
 
 ----
 

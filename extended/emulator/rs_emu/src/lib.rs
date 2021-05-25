@@ -93,8 +93,8 @@ impl Emu {
 
         self.rm = self.ram[self.ra as usize];
         let inst = self.rom[self.pc as usize];
-        //println!("pc: {}, ra: {}, rd: {}, rm: {}, inst: {}\n",
-        //self.pc, self.ra, self.rd, self.rm, inst);
+        //println!("pc: {}, ra: {}, rd: {}, rm: {}, inst: {}",
+                    //self.pc, self.ra, self.rd, self.rm, inst);
 
         if inst >> 15 == 1 {
 
