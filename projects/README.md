@@ -1,3 +1,4 @@
+# Projects
 ## Part 1
 
 ### Week 1: Logic gates, multiplexors, demultiplexors

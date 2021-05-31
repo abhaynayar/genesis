@@ -1,0 +1,6 @@
+class Main {
+    function void main() {
+        do Output.printString("root@nv6:/# ");
+        return;
+    }
+}

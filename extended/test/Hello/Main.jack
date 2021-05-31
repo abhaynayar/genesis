@@ -1,8 +1,0 @@
-class Main {
-    function void main() {
-        do Output.printString("Welcome to n2t-wasm");
-        do Screen.drawRectangle(50, 50, 100, 100);
-        do Output.printString("~# ");
-        return;
-    }
-}
