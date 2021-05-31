@@ -27,8 +27,8 @@ I recommend you to understand the build pipeline by reading `run.sh`.
 ### Compatibility
 
 Keep in mind that these modifications will create changes throughout the entire
-stack, including the CPU. The programs compiled through the toolchain in the
-this repository will not work on the original Hack platform.
+stack, including the CPU. The programs compiled through the toolchain in this
+repository will not work on the original Hack platform.
 
 ### Requirements
 
@@ -52,7 +52,7 @@ Execute `./run.sh`:
 ### Future work
 
 - xv6-like operating system.
-- Optimize graphics library in OS
+- Optimize graphics library in OS.
 - Optimize Python CPU emulator.
 - Video memory for screen.
 
@@ -60,9 +60,11 @@ Execute `./run.sh`:
 
 ## Projects
 
-The course projects have been organized by weeks. Summary below:
+The coursework is in the `projects/` directory and has been organized by weeks.
+Summary below:
 
 <table>
+
 <tr>
 <th>Project</th>
 <th>Description</th>
@@ -127,3 +129,5 @@ The course projects have been organized by weeks. Summary below:
 <td>12</td>
 <td>Operating System</td>
 </tr>
+
+</table>

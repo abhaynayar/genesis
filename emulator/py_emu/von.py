@@ -6,6 +6,10 @@ import pygame
 import struct
 import ctypes
 
+def err(x):
+    print(x)
+    exit()
+
 ################################################
 # Some pygame config.
 
@@ -36,7 +40,6 @@ start doing more stuff once we have access to external storage and file systems.
 # bootstrap code. The below offset is where our big-ass RAM starts.
 RAM_OFFSET = 0x8000
 
-
 ################################################
 # The emulator class.
 class Emu:
@@ -54,6 +57,7 @@ class Emu:
 
         infile = open(sys.argv[1]).readlines()
         for i,line in enumerate(infile):
+            if i>32767: err("Program too large...")
             self.ram[i] = int(line,2)
 
     def dump_regs(self, inst):
@@ -77,6 +81,41 @@ class Emu:
             if (set1 != 0): screen.set_at(((x*16)+i, y), black)
             else: screen.set_at(((x*16)+i, y), white)
         pygame.display.flip()
+
+    def clear_keyboard(self):
+        self.store_ram(24576, 0)
+
+    def update_keyboard(self, keycode):
+        key_translation = {
+            13: 128, #newline
+            8:  129, #backspace
+            1073741904: 130, #left
+            1073741906: 131, #up
+            1073741903: 132, #right
+            1073741905: 133, #down
+            1073741898: 134, #home
+            1073741901: 135, #end
+            1073741899: 136, #pgup
+            1073741902: 137, #pgdn
+            1073741897: 138, #insert
+            127: 139, #delete
+            27:  140, #escape
+            1073741882: 141, #f1
+            1073741883: 142, #f2
+            1073741884: 143, #f3
+            1073741885: 144, #f4
+            1073741886: 145, #f5
+            1073741887: 146, #f6
+            1073741888: 147, #f7
+            1073741889: 148, #f8
+            1073741890: 149, #f9
+            1073741891: 150, #f10
+            1073741892: 151, #f11
+            1073741893: 152, #f12
+        }
+
+        host = key_translation.get(keycode, keycode)
+        self.store_ram(24576, host)
     
     def get_comp_res(self, comp):
         if comp == 0x2a: return 0
@@ -165,11 +204,14 @@ class Emu:
 
 emu = Emu()
 
+
+
 ################################################
 # Main driver program:
 running = True
 while running:
     emu.tick()
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        if event.type == pygame.QUIT: running = False
+        if event.type == pygame.KEYDOWN: emu.update_keyboard(event.key)
+        if event.type == pygame.KEYUP: emu.clear_keyboard()
