@@ -1,0 +1,15 @@
+class Shell {
+    function void main() {
+        var char c, key;
+    	var String s;
+    	var boolean ok;
+    
+        let ok = false;
+        while (~ok) {
+            let s = Keyboard.readLine("$ ");
+            do Output.printString(s);
+            do Output.println();
+	    }
+        return;
+    }
+}

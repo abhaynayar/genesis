@@ -1,8 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/12/Keyboard.jack
-
 /**
  * A library for handling user input from the keyboard.
  */
@@ -44,19 +39,17 @@ class Keyboard {
      */
     function char readChar() {
         var char c;
-        
-        // TODO: display cursor
 
         // Wait for key to be pressed
-        while (Keyboard.keyPressed() = 0) { let c=c; }
+        while (Keyboard.keyPressed() = 0) {}
 
         let c = Keyboard.keyPressed();
 
         // Wait for key to be released
-        while(~(Keyboard.keyPressed() = 0)) { let c=c; }
+        while(~(Keyboard.keyPressed() = 0)) {}
 
         // Echo keypress to the screen
-        do Output.printChar(c);
+        //do Output.printChar(c);
         return c;
     }
 
@@ -74,7 +67,7 @@ class Keyboard {
 
         while (true) {
             let c = Keyboard.readChar();
-            
+
             // newLine
             if (c = 128) {
                 do Output.println();
@@ -85,8 +78,11 @@ class Keyboard {
             if (c = 129) {
                 do s.eraseLastChar();
             }
-            
-            do s.appendChar(c);
+
+            if (~(c=128) | ~(c=129)) {
+                do Output.printChar(c);
+                do s.appendChar(c);
+            }
         }
         return s;
     }   

@@ -10,6 +10,7 @@ class Sys {
         do Output.init();
         do Screen.init();
         do Keyboard.init();
+        do Paging.init();
 
         do Main.main();
         do Sys.halt();

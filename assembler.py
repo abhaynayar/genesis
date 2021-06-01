@@ -83,8 +83,8 @@ def main():
                 label = line[left+1:right]
                 if label not in symbol_table:
                     symbol_table[label] = str(line_counter)
-            # print(line_with_comments.strip()+"\t//" + str(line_counter))
-        # else: print(line_with_comments.strip())
+            print(line_with_comments.strip()+"\t//" + str(line_counter))
+        else: print(line_with_comments.strip())
 
     # 3. Variable symbols
     # - Set counter to 16
@@ -195,12 +195,14 @@ def main():
                 else:
                     address = int(symbol_table[line[line.find("@")+1:]])
 
-                out_line += format(address, "015b")
+                out_line += format(address, "063b") #milch
                 out_line += "\n"
 
             # If it's not an A instruction, it's a C instruction
             else:
-                out_line = "111"
+                out_line += "1" #milch
+                out_line += "0"*(64-16-1)
+                out_line += "111"
 
                 comp = ""
                 dest = ""

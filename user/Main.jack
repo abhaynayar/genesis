@@ -1,30 +1,7 @@
 class Main {
     function void main() {
-    	var char c, key;
-    	var String s;
-    	var int i;
-    	var boolean ok;
-    
-        do Output.printString("root@n2t:~# ");
-        let ok = false;
-        while (~ok) {
-            while (key = 0) {
-                let key = Keyboard.keyPressed();
-            }
-
-            let c = key;
-            while (~(key = 0)) {
-                let key = Keyboard.keyPressed();
-            }
-
-            do Output.printChar(c);
-            if (c = 113) {
-       	        do Output.printString("bye");
-	            let ok = true;
-	        }
-	    }
-	
-        return;
+        do Screen.drawCircle(50,50,10);
+        do Shell.main();
     }
 }
 

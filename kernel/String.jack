@@ -42,7 +42,9 @@ class String {
 
     /** Erases the last character from this string. */
     method void eraseLastChar() {
-        let length = length-1;
+        if (length > 0) {
+            let length = length-1;
+        }
         return;
     }
 
