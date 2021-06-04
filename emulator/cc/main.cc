@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <vector>
+#include <bitset>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
@@ -7,22 +8,22 @@
 
 #define SCREEN_WIDTH 512
 #define SCREEN_HEIGHT 256
+#define ROM_OFFSET 0x8000
 
-void err(std::string x) {
-    std::cout << x << std::endl;
+void err(std::string e) {
+    std::cout << e << std::endl;
     exit(0);
 }
 
 class Emu {
 public:
 
-    Uint16 pc, ra, rd, rm;
-    Uint16 rom[0x8000], ram[0x8000];
+    int64_t pc, ra, rd, rm;
+    uint64_t ram[0x10000];
     SDL_Renderer* m_renderer;
 
     Emu(SDL_Renderer* renderer) {
         m_renderer = renderer;
-        store_ram(0, 128);
     }
 
     void set_pixel(int x, int y, int color) {
@@ -33,24 +34,22 @@ public:
         SDL_RenderDrawPoint(m_renderer, x, y);
         SDL_RenderPresent(m_renderer);
 
-        /*
-        const unsigned int offset = (SCREEN_WIDTH*4*y) + x*4;
-        pixels[offset+0] = color;               // b
-        pixels[offset+1] = color;               // g
-        pixels[offset+2] = color;               // r
-        pixels[offset+3] = SDL_ALPHA_OPAQUE;    // a
-        */
+        //const unsigned int offset = (SCREEN_WIDTH*4*y) + x*4;
+        //pixels[offset+0] = color;               // b
+        //pixels[offset+1] = color;               // g
+        //pixels[offset+2] = color;               // r
+        //pixels[offset+3] = SDL_ALPHA_OPAQUE;    // a
     }
 
 
-    void store_ram(Uint16 address, Uint16 value) {
+    void store_ram(Uint64 address, Uint64 value) {
         ram[address] = value;
 
-        Uint16 screen_address = address - 0x4000;
+        Uint64 screen_address = address - 0x4000;
         if (screen_address < 0) return;
 
-        Uint16 x = int(screen_address % 32);
-        Uint16 y = int(screen_address / 32);
+        Uint64 x = int(screen_address % 32);
+        Uint64 y = int(screen_address / 32);
 
         for (int i=15; i>=0; --i) {
             int set = value & (1<<i);
@@ -64,16 +63,17 @@ public:
 
     void load_rom(std::vector<std::string> &file_contents) {
         for (int i=0; i<file_contents.size(); ++i) {
-            rom[i] = std::stoi(file_contents[i], nullptr, 2);
+            std::cout << file_contents[i] << std::endl;
+            //ram[ROM_OFFSET+i] = std::bitset<64>(file_contents[i]).to_ullong();
         }
         std::cout << "ROM loaded" << std::endl;
     }
 
-    Uint16 comp_exe(Uint16 comp) {
+    Uint64 comp_exe(Uint64 comp) {
         switch (comp) {
             /*  0  */ case 0x2a: return 0;
             /*  1  */ case 0x3f: return 1;
-            /* -1  */ case 0x3a: return 0xffff; //-(1 as i16) as u16,
+            /* -1  */ case 0x3a: return 0xffffffffffffffff;
             /*  D  */ case 0x0c: return rd;
             /*  A  */ case 0x30: return ra;
             /* !D  */ case 0x0d: return ~rd;
@@ -104,11 +104,11 @@ public:
             //heinz
             ///* M*D */ case 0x41: return rm*rd;
             ///* M/D */ case 0x43: return rm/rd;
-            default: err("Invalid comp value"); return -1;
+            default: err("Invalid comp value " + std::to_string(comp)); return -1;
         };
     }
 
-    void dest_exe(Uint16 dest, Uint16 comp_res) {
+    void dest_exe(Uint64 dest, Uint64 comp_res) {
         switch (dest) {
             case 0x00: break;
             case 0x01:
@@ -142,8 +142,8 @@ public:
         }
     }
 
-    bool jump_exe(Uint16 jump, Uint16 ucomp_res) {
-        int16_t comp_res = (int16_t) ucomp_res;
+    bool jump_exe(Uint64 jump, Uint64 ucomp_res) {
+        int64_t comp_res = (int64_t) ucomp_res;
 
         switch (jump) {
             /* INC */ case 0x00: return false; // pc += 1
@@ -160,15 +160,15 @@ public:
 
     void tick() {
         rm = ram[ra];
-        Uint16 inst = rom[pc];
+        Uint64 inst = ram[ROM_OFFSET+pc];
         //printf("pc: %d, ra: %d, rd: %d, rm: %d, inst: %d\n", pc, ra, rd, rm, inst);
 
-        if (inst >> 15 == 1) {
-            Uint16 comp = (inst & 0x1fc0) >> 6;
-            Uint16 dest = (inst & 0x0038) >> 3;
-            Uint16 jump = (inst & 0x0007) >> 0;
+        if (inst >> 63 == 1) {
+            Uint64 comp = (inst & 0x1fc0) >> 6;
+            Uint64 dest = (inst & 0x0038) >> 3;
+            Uint64 jump = (inst & 0x0007) >> 0;
 
-            Uint16 comp_res = comp_exe(comp);
+            Uint64 comp_res = comp_exe(comp);
             dest_exe(dest, comp_res);
 
             bool jump_res = jump_exe(jump, comp_res);
@@ -184,7 +184,6 @@ public:
 };
 
 int main(int argc, char** argv){
-    
     if(argc != 2) {
         puts("usage: cc_emu [HACK_FILE]");
         return 1;
@@ -236,6 +235,5 @@ int main(int argc, char** argv){
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-
     return 0;
 }

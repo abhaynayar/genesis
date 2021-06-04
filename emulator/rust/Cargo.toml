@@ -5,10 +5,17 @@ authors = ["Abhay Nayar <abhaynayar@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+
 log = "0.4.8"
 time = "0.2.26"
-
 env_logger = "0.7.1"
-pixels = "0.2.0"
+
+# Winit
 winit = "0.22.0"
 winit_input_helper = "0.6.0"
+pixels = "0.2.0"
+
+# SDL
+#[dependencies.sdl2]
+#version = "0.34.5"
+#features = ["gfx"]

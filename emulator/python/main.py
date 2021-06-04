@@ -11,6 +11,26 @@ def err(x):
     exit()
 
 ################################################
+# Some consts.
+XX_BIT = 64
+
+DATA_START = 0
+DATA_END   = 0x3fff
+DATA_SIZE  = DATA_END - DATA_START + 1
+
+SCREEN_START = 0x4000
+SCREEN_END   = 0x5fff
+SCREEN_SIZE  = SCREEN_END - SCREEN_START + 1
+
+KEYBOARD_ADDR = 0x6000
+KEYBOARD_SIZE = 1
+RESERVED_SIZE = 0x1fff
+
+CODE_START = 0x8000
+CODE_END   = 0xfffff
+CODE_SIZE  = CODE_END - CODE_START + 1
+
+################################################
 # Some pygame config.
 
 (white, black)  = ((255,255,255), (0,0,0))
@@ -25,18 +45,11 @@ pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 pygame.display.update()
 
 ################################################
-# Now that we have von-Neumann architecture, we are still keeping some area
-# reserved in the beginning for some read-only code that is kind of like a
-# bootstrap code. The below offset is where our big-ass RAM starts.
-RAM_OFFSET = 0x8000
-XX_BIT = 64
-
-################################################
 # The emulator class.
 class Emu:
 
-    # RAM (1MB) = DATA  +   CODE
-    ram = [0] * (0x8000 + 0xf8000)
+    ram = [0] * (DATA_SIZE + SCREEN_SIZE + \
+            KEYBOARD_SIZE +  RESERVED_SIZE + CODE_SIZE) 
 
     pc = 0
     ra = 0
@@ -46,8 +59,7 @@ class Emu:
     def __init__(self):
         infile = open(sys.argv[1]).readlines()
         for i,line in enumerate(infile):
-            if i>=0x8000000: err("Program too large...")
-            self.ram[RAM_OFFSET+i] = int(line,2)
+            self.ram[CODE_START+i] = int(line,2)
 
     def dump_regs(self, inst):
         print("pc:", self.pc, end=", ")
@@ -55,24 +67,25 @@ class Emu:
         print("rd:", self.rd, end=", ")
         print("rm:", self.rm, end=", ")
         print("inst:", inst)
-    
+
     def store_ram(self, address, value):
         self.ram[address] = value
+        if address >= SCREEN_START and address <= SCREEN_END:
+            self.update_screen(address-SCREEN_START, value)
         
-        # if address>=0x4000 and address<0x6000:
-        screen_address = address - 0x4000
-        if screen_address < 0: return
-        
-        x = int(screen_address % 32)
-        y = int(screen_address / 32)
+    def update_screen(self, address, value):
+        x = int(address % 32)
+        y = int(address / 32)
+
+        # TODO: We are only looking at 16 bits instead of 64 bits
         for i in range(15,-1,-1):
-            set1 = value & (1<<i)
-            if (set1 != 0): screen.set_at(((x*16)+i, y), black)
+            pixel = value & (1<<i)
+            if (pixel != 0): screen.set_at(((x*16)+i, y), black)
             else: screen.set_at(((x*16)+i, y), white)
-        #pygame.display.update(pygame.Rect(x*16, y, 16, 1))
+        pygame.display.update(pygame.Rect(x*16, y, 16, 1))
 
     def clear_keyboard(self):
-        self.store_ram(24576, 0)
+        self.store_ram(KEYBOARD_ADDR, 0)
 
     def update_keyboard(self, keycode):
         key_translation = {
@@ -104,7 +117,7 @@ class Emu:
         }
 
         host = key_translation.get(keycode, keycode)
-        self.store_ram(24576, host)
+        self.store_ram(KEYBOARD_ADDR, host)
     
     def get_comp_res(self, comp):
         if comp == 0x2a: return 0
@@ -122,7 +135,7 @@ class Emu:
         elif comp == 0x32: return self.ra-1
         elif comp == 0x02: return self.rd+self.ra
         elif comp == 0x23: return self.rd-self.ra
-        elif comp == 0x13: return self.rd-self.ra #FIXME
+        elif comp == 0x13: return self.rd-self.ra #TODO: HW-based emulator
         elif comp == 0x07: return self.ra-self.rd
         elif comp == 0x00: return self.rd&self.ra
         elif comp == 0x15: return self.rd|self.ra
@@ -159,7 +172,7 @@ class Emu:
             self.ra = self.rd = comp_res
     
     def jump_res(self, jump, comp_res):
-        # Need to be signed for comparisons
+        # Signed for comparisons:
         comp_res = ctypes.c_int64(comp_res).value #milch
         if jump == 0: return False
         if jump == 1: return comp_res > 0
@@ -172,7 +185,7 @@ class Emu:
     
     def tick(self):
         self.rm = self.ram[self.ra]
-        inst = self.ram[RAM_OFFSET+self.pc]
+        inst = self.ram[CODE_START+self.pc]
         # self.dump_regs(inst)
 
         if (inst>>XX_BIT-1) == 1: # C Instruction: #milch
@@ -202,11 +215,7 @@ while running:
     emu.tick()
     ticks += 1
 
-    if ticks % 0x10000 == 0:
-        pygame.display.flip()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE: running = False
-            if event.type == pygame.KEYDOWN: emu.update_keyboard(event.key)
-            if event.type == pygame.KEYUP: emu.clear_keyboard()
+    for event in pygame.event.get():
+        if event.type==pygame.QUIT: running = False
+        if event.type==pygame.KEYUP: emu.clear_keyboard()
+        if event.type==pygame.KEYDOWN: emu.update_keyboard(event.key)

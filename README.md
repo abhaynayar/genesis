@@ -1,8 +1,8 @@
-# Plumbus
+# nand2tetris
 
-After finishing the [nand2tetris](https://github.com/abhaynayar/nand2tetris)
-course, I was interested in extending the platform further. That work is called
-plumbus.
+After finishing the [nand2tetris](https://nand2tetris.org) course, I was
+interested in extending the platform further. This repository contains those
+extensions.
 
 ## Features
 
@@ -12,24 +12,39 @@ plumbus.
 
 ## Compatibility
 
-Keep in mind that these modifications will create changes throughout the entire
-stack, including the CPU. The programs compiled through the toolchain in this
-repository will not work on the original Hack platform.
+Keep in mind that these modifications disrupt the entire stack, including the
+CPU. The programs compiled through the toolchain in this repository will not
+work on the original Hack platform.
 
-## Requirements
+## Build
 
-Tested on Ubuntu 20.04. For the compilation, translation and assembling of Jack
-programs, you will need Python 3. For the CPU emulator, you will need pygame:
-`pip3 install -r requirements.txt`
+Tested on Ubuntu 20.04.
 
-## Building
+Get the code:
 
-Execute `./run.sh`.
+```
+git clone https://github.com/abhaynayar/nand2tetris
+cd nand2tetris
+```
 
-What it does:
-- Compiles the `*.jack` files in kernel/ and user/.
-- Translates the compiled VM code to Hack assembly.
-- Assembles the Hack assembly code to machine code.
+For the CPU emulator, you need to install pygame.
+
+```
+pip3 install pygame
+```
+
+For the compilation, translation and assembling of Jack programs, you will need
+Python3. You can run the entire system using `run.sh` in the root directory:
+
+```
+./run.sh
+```
+
+What `run.sh` does:
+- Compiles the `*.jack` files in `kernel/` and `user/` directories.
+- Copies the VM files to the `build/` directory.
+- Translates the compiled VM code to Hack assembly. `build/out.asm`
+- Assembles the Hack assembly code to machine code. `build/out.hack`
 - Runs the machine code on the CPU emulator.
 
 ## Future work

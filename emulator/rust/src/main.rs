@@ -27,9 +27,8 @@ fn main() -> Result<(), Error> {
     
     let mut emu = Emu::new();
     emu.load_rom(&buffer);
-    emu.store_ram(0, 128); // For Rect.hack
 
-    // -------------------------- Game loop ---------------------------- //
+    // ------------------------ Game loop -------------------------- //
     
     env_logger::init();
     let event_loop = EventLoop::new();
@@ -56,7 +55,7 @@ fn main() -> Result<(), Error> {
     let mut time = Instant::now();
 
     event_loop.run(move |event, _, control_flow| {
-        emu.tick();
+        emu.ticks(1000);
         
         if let Event::RedrawRequested(_) = event {
             emu.draw(pixels.get_frame());
@@ -70,33 +69,34 @@ fn main() -> Result<(), Error> {
                 return;
             }
         }
+   
+        let now = Instant::now();
+        let dt = now.duration_since(time);
+        
+        let one_frame = Duration::new(0,10_000_000);
+        if dt > one_frame {
+            time = now;
+            window.request_redraw();
+        }
  
         if input.update(event) {
             if input.key_pressed(VirtualKeyCode::Escape) || input.quit() {
                 *control_flow = ControlFlow::Exit;
                 return;
             }
- 
-            if input.key_pressed(VirtualKeyCode::A) {
-                emu.store_ram(24576, 97);
-            }
-
-            if input.key_pressed(VirtualKeyCode::A) {
-                emu.store_ram(24576, 0);
-            }
 
             if let Some(size) = input.window_resized() {
                 pixels.resize(size.width, size.height);
             }
-            
-            let now = Instant::now();
-            let dt = now.duration_since(time);
-            
-            let one_frame = Duration::new(0, 75_000_000);
-            if dt > one_frame {
-                time = now;
-                window.request_redraw();
+
+            /*
+            if input.key_pressed(VirtualKeyCode::Left) {
+                self.emu.store_ram(24576, ASCII_CODE);
             }
+            if input.key_released(VirtualKeyCode::Left) {
+                self.emu.store_ram(24576, 0);
+            }
+            */
         }
     });
 }

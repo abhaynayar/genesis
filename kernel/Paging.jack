@@ -1,7 +1,9 @@
 class Paging {
     function void init() {
+    /*
         do Output.printString("paging init");
         do Output.println();
+    */
         return;
     }
 }

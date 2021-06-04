@@ -1,7 +1,5 @@
 class Main {
     function void main() {
-        do Screen.drawCircle(50,50,10);
         do Shell.main();
     }
 }
-

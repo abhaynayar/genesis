@@ -1,4 +1,4 @@
-# Troubleshooting
+# Errors
 ## Invalid comp value 0x7f
 
 This can happen if you don't have a return value for a function which is
