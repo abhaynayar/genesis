@@ -41,7 +41,7 @@ Python3. You can run the entire system using `run.sh` in the root directory:
 ```
 
 What `run.sh` does:
-- Compiles the `*.jack` files in `kernel/` and `user/` directories.
+- Compiles the `*.jack` files in `kernel/` and `userland/` directories.
 - Copies the VM files to the `build/` directory.
 - Translates the compiled VM code to Hack assembly. `build/out.asm`
 - Assembles the Hack assembly code to machine code. `build/out.hack`
