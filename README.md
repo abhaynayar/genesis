@@ -1,23 +1,17 @@
 # nand2tetris
 
-After finishing the [nand2tetris](https://nand2tetris.org) course, I was
-interested in extending the platform further. This repository contains those
-extensions.
+This repository aims to extend the [nand2tetris](https://nand2tetris.org)
+platform, with a focus on extending the Jack operating system.
 
-## Features
+Keep in mind that the modifications disrupt the entire stack, including the CPU.
+The programs compiled through the toolchain in this repository will not work on
+the original Hack platform. The progress can be found in the blog given below.
 
-- Multiply and divide in CPU.
-- No more ROM. Everything is in RAM. (1MB)
-- No more 16-bit. It is a 64-bit computer now.
-
-## Compatibility
-
-Keep in mind that these modifications disrupt the entire stack, including the
-CPU. The programs compiled through the toolchain in this repository will not
-work on the original Hack platform.
+## Blog
+* **[Introduction](blog/intro.md)**
+* **Interrupts**
 
 ## Build
-
 Tested on Ubuntu 20.04.
 
 Get the code:
@@ -47,12 +41,26 @@ What `run.sh` does:
 - Assembles the Hack assembly code to machine code. `build/out.hack`
 - Runs the machine code on the CPU emulator.
 
-## Future work
+---
 
-- Shell and filesystem.
-- Video memory for screen.
+## Future work
+- Interrupts.
+- Privilege modes.
+- System calls.
+- Paging.
+- Shell.
+- Filesystem.
+- Video memory.
+
+## Todo
 - Hardware-based CPU emulator.
-- Virtualized operating system.
 - Optimized Python CPU emulator.
 - Optimized graphics library in OS.
 - Cursor and scroll support for text input.
+- Output multiple files from assembler; concat them in the build script.
+- While updating screen, check if it is already set and then don't update.
+
+## Done
+- Multiply and divide in CPU.
+- No more ROM. Everything is in RAM. (1MB)
+- No more 16-bit. It is a 64-bit computer now.
