@@ -42,28 +42,12 @@ What `run.sh` does:
 - Assembles the Hack assembly code to machine code. `build/out.hack`
 - Runs the machine code on the CPU emulator.
 
----
-
-# OS Development
 ## Todo
-- Interrupts.
-- Privilege modes.
-- System calls.
-- Paging.
-- Shell.
-- Filesystem.
-- Video memory.
 
-## Done
-- Multiply and divide in CPU.
-- No more ROM. Everything is in RAM. (1MB)
-- No more 16-bit. It is a 64-bit computer now.
-
----
-
-# Misc.
-## Todo
-- Remove docs/.
+- ~~Remove docs/.~~
+- ~~16-bit to 64-bit.~~
+- ~~Everything in RAM.~~
+- ~~Multiply and divide in CPU.~~
 - CamelCase everywhere?
 - Self-hosting compiler.
 - Better compiler errors.
@@ -71,7 +55,6 @@ What `run.sh` does:
 - VM translator to RISC-V.
 - Implement for loop in Jack.
 - Hardware-based CPU emulator.
-- 64-bit stuff in the compiler.
 - Optimized Python CPU emulator.
 - Provide isolation on CPU level?
 - Optimized graphics library in OS.
