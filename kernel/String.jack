@@ -80,13 +80,20 @@ class String {
         var int dup, mod;
         var int i, tmp;
 
+        // Check if negative
         let isNeg = (val<0);
         let dup = val;
 
-        // This is a new string
+        // Reset string
         let length = 0;
 
-        // If negative, convert to positive
+        // Special case for zero
+        if (val=0) {
+            do appendChar(48);
+            return;
+        }
+
+        // Multiply with -1 if negative
         if (isNeg) {
             let dup = dup*(-1);
         }
