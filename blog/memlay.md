@@ -58,6 +58,8 @@ With this layout, we have the ability to increase the CODE section as much as we
 want, since it is at the tail end. Now, even without the optimized toolchain, we
 can run Pong on the CPU emulator.
 
+---
+
 [Previous](arch.md)
 
 [Next](boot.md)

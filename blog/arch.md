@@ -42,6 +42,8 @@ have padded them with zeros to the left. The MSB is hardcoded as 1 to
 differentiate them from A instructions. New opcodes have been added to support
 multiplication and division in the CPU emulator instead of the OS.
 
+---
+
 [Previous](intro.md)
 
 [Next](memlay.md)
