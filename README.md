@@ -3,13 +3,14 @@
 This repository aims to extend the [nand2tetris](https://nand2tetris.org)
 platform, with a focus on extending the Jack operating system.
 
-Keep in mind that the modifications disrupt the entire stack, including the CPU.
-The programs compiled through the toolchain in this repository will not work on
-the original Hack platform. The progress can be found in the blog given below.
-
 ## Blog
+
 * **[Introduction](blog/intro.md)**
-* **Interrupts**
+* **[Architecture](blog/arch.md)**
+* **[Memory Layout](blog/memlay.md)**
+* **[Boot](blog/boot.md)**
+* Interrupts
+* Processes
 
 ## Build
 Tested on Ubuntu 20.04.
@@ -43,7 +44,8 @@ What `run.sh` does:
 
 ---
 
-## Future work
+# OS Development
+## Todo
 - Interrupts.
 - Privilege modes.
 - System calls.
@@ -52,15 +54,28 @@ What `run.sh` does:
 - Filesystem.
 - Video memory.
 
-## Todo
-- Hardware-based CPU emulator.
-- Optimized Python CPU emulator.
-- Optimized graphics library in OS.
-- Cursor and scroll support for text input.
-- Output multiple files from assembler; concat them in the build script.
-- While updating screen, check if it is already set and then don't update.
-
 ## Done
 - Multiply and divide in CPU.
 - No more ROM. Everything is in RAM. (1MB)
 - No more 16-bit. It is a 64-bit computer now.
+
+---
+
+# Misc.
+## Todo
+- Remove docs/.
+- CamelCase everywhere?
+- Self-hosting compiler.
+- Better compiler errors.
+- Optimize VM translator.
+- VM translator to RISC-V.
+- Implement for loop in Jack.
+- Hardware-based CPU emulator.
+- 64-bit stuff in the compiler.
+- Optimized Python CPU emulator.
+- Provide isolation on CPU level?
+- Optimized graphics library in OS.
+- Cursor and scroll support for text input.
+- Print string and new-line in the same function.
+- Output multiple files from assembler; concat them in the build script.
+- While updating screen, check if it is already set and then don't update.
