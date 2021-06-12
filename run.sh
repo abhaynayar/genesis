@@ -1,12 +1,17 @@
-# Compiling kernel/ and userland/
+# Target Directory:
+#   -- userland: standard operating system
+#   -- tests: testing stuff in the kernel
+target_dir="tests" 
+
+# Compiling kernel/ and $target_dir/
 python3 compiler/JackCompiler.py kernel/
-python3 compiler/JackCompiler.py userland/
+python3 compiler/JackCompiler.py $target_dir/
 
 # Moving VM files to build directory
 mkdir -p build
 rm build/*
 cp kernel/*.vm build/
-cp userland/*.vm build/
+cp $target_dir/*.vm build/
 
 # Translating
 python3 translator/translator.py build/

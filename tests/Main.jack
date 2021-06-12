@@ -1,0 +1,43 @@
+class Main {
+    function void main() {
+        do Output.printString("TEST-MODE:");
+        do Output.println();
+        do Output.println();
+
+        do String_setInt();
+        //do String_compare();
+        return;
+    }
+
+    function void String_setInt() {
+        do Output.printString("Testing String.setInt():");
+        do Output.println();
+        
+        do Output.printString("Printing 0: ");
+        do Output.printInt(0);
+        do Output.println();
+        
+        do Output.printString("Printing -1: ");
+        do Output.printInt(-1);
+        do Output.println();
+        return;
+    }
+
+    function void String_compare() {
+        do Output.printString("Testing String.compare():");
+        do Output.println();
+        
+        do Output.printString("Comparing 'ab' and 'ab': ");
+        do Output.printInt(String.compare("ab", "ab"));
+        do Output.println();
+        
+        do Output.printString("Comparing 'a' and 'b': ");
+        do Output.printInt(String.compare("a", "b"));
+        do Output.println();
+        
+        do Output.printString("Comparing 'b' and 'a': ");
+        do Output.printInt(String.compare("b", "a"));
+        do Output.println();
+        return;
+    }
+}
