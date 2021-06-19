@@ -4,8 +4,14 @@ class Main {
         do Output.println();
         do Output.println();
 
-        do String_setInt();
+        //do String_setInt();
         //do String_compare();
+        do Screen_drawCircle();
+        return;
+    }
+
+    function void Screen_drawCircle() {
+        do Screen.drawCircle(50,50,10);
         return;
     }
 

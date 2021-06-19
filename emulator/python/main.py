@@ -6,6 +6,12 @@ import pygame
 import struct
 import ctypes
 
+################################################
+# Initializing file system:
+fs = open('fs.img', 'r+b') # Read and write binary file
+
+################################################
+# Error stub:
 def err(x):
     print(x)
     exit()
@@ -68,7 +74,18 @@ class Emu:
         print("rm:", self.rm, end=", ")
         print("inst:", inst)
 
+    def load_ram(self, address):
+        if address > 0xfffff: # We are in disk
+            fs.seek(address-0x100000)
+            return ord(fs.read(1))
+        else: return self.ram[address]
+
     def store_ram(self, address, value):
+        if address > 0xfffff: # We are in disk
+            fs.seek(address-0x100000)
+            fs.write(value)
+            return
+
         self.ram[address] = value
         if address >= SCREEN_START and address <= SCREEN_END:
             self.update_screen(address-SCREEN_START, value)
@@ -184,8 +201,8 @@ class Emu:
         if jump == 7: return True
     
     def tick(self):
-        self.rm = self.ram[self.ra]
-        inst = self.ram[CODE_START+self.pc]
+        self.rm = self.load_ram(self.ra)
+        inst = self.load_ram(CODE_START+self.pc)
         # self.dump_regs(inst)
 
         if (inst>>XX_BIT-1) == 1: # C Instruction: #milch

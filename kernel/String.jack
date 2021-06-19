@@ -158,8 +158,6 @@ class String {
         if (a.length() < b.length()) {
             return -1;
         } else {
-            do Output.printInt(a.length());
-            do Output.printInt(b.length());
             if (a.length() = b.length()) {
                 return 0;
             } else {

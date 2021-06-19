@@ -1,0 +1,18 @@
+class Disk {
+    // array for flat disk memory
+    static Array dmem;
+
+    function void init() {
+        let dmem = 1048576;
+        return;
+    }
+    
+    function int peek(int address) {
+        return dmem[address];
+    }
+    
+    function void poke(int address, int value) {
+        let dmem[address] = value;
+        return;
+    }
+}

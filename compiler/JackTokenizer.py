@@ -64,7 +64,7 @@ class JackTokenizer:
             dig_cnt = 1 # digit counter
             while self.content[self.seeker+dig_cnt].isdigit(): dig_cnt+=1
             self.current = self.content[self.seeker:self.seeker+dig_cnt]
-            if int(self.current) > 32767 or int(self.current) < 0:
+            if int(self.current) > 2**(64-1)-1 or int(self.current) < 0:
                 print('Integer constant out of range')
                 exit()
             self.seeker += dig_cnt

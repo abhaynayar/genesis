@@ -1,0 +1,20 @@
+class Process {
+
+    // Registers for the process
+    static int rA;
+    static int rM;
+    static int rD;
+
+    // Stack pointer
+    static int sp;
+
+    // Process ID
+    static int pid;
+
+    function void init() {
+        let rA = 0;
+        let rM = 0;
+        let rD = 0;
+        return;
+    }
+}

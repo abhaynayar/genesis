@@ -52,14 +52,9 @@ SCREEN:   0x4000 to 0x5fff
 KEYBOARD: 0x6000
 RESERVED: 0x6001 to 0x7fff
 CODE:     0x8000 to 0xfffff
+DISK:     0x100000 to idk
 ```
 
 With this layout, we have the ability to increase the CODE section as much as we
 want, since it is at the tail end. Now, even without the optimized toolchain, we
 can run Pong on the CPU emulator.
-
----
-
-[Previous](arch.md)
-
-[Next](boot.md)

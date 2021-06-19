@@ -4,10 +4,17 @@ class Shell {
     	var String s;
     	var boolean ok;
     
-        let ok = false;
-        while (~ok) {
+        while (true) {
+            
             let s = Keyboard.readLine("$ ");
-            do Output.printString(s);
+
+            if (String.compare(s,"pong") = 0) {
+                do Output.printString("YES!");
+                do PongMain.main();
+            } else {
+                do Output.printString("NOO!");
+            }
+
             do Output.println();
 	    }
         return;

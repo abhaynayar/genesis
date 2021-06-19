@@ -1,5 +1,6 @@
 class Main {
     function void main() {
         do Shell.main();
+        return;
     }
 }

@@ -1,17 +1,19 @@
 # Target Directory:
 #   -- userland: standard operating system
 #   -- tests: testing stuff in the kernel
-target_dir="tests" 
+target_dir="userland" 
 
 # Compiling kernel/ and $target_dir/
 python3 compiler/JackCompiler.py kernel/
 python3 compiler/JackCompiler.py $target_dir/
+python3 compiler/JackCompiler.py userland/pong
 
 # Moving VM files to build directory
 mkdir -p build
 rm build/*
 cp kernel/*.vm build/
 cp $target_dir/*.vm build/
+cp userland/pong/*.vm build/
 
 # Translating
 python3 translator/translator.py build/
@@ -20,5 +22,5 @@ python3 translator/translator.py build/
 python3 assembler/assembler.py build/out.asm > build/out.dbg
 
 # Emulating
-python3 emulator/python/main.py build/out.hack &
+python3 emulator/python/main.py build/out.hack
 #emulator/rust/target/debug/rs_emu build/out.hack

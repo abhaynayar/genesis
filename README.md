@@ -1,16 +1,17 @@
 # nand2tetris
 
-This repository aims to extend the [nand2tetris](https://nand2tetris.org)
-platform, with a focus on extending the Jack operating system.
+Extend the [nand2tetris](https://nand2tetris.org) platform, with a focus on
+extending the Jack operating system.
 
-## Blog
+## Docs
 
-* **[Introduction](blog/intro.md)**
-* **[Architecture](blog/arch.md)**
-* **[Memory Layout](blog/memlay.md)**
-* **[Boot](blog/boot.md)**
-* Interrupts
-* Processes
+* **[Introduction](docs/intro.md)**
+* **[Architecture](docs/arch.md)**
+* **[Memory Layout](docs/memlay.md)**
+* **[Boot](docs/boot.md)**
+* **[Interrupts](docs/intr.md)**
+* **[Processes](docs/proc.md)**
+* **[File System](docs/fs.md)**
 
 ## Build
 Tested on Ubuntu 20.04.
@@ -43,11 +44,8 @@ What `run.sh` does:
 - Runs the machine code on the CPU emulator.
 
 ## Todo
-
-- ~~Remove docs/.~~
-- ~~16-bit to 64-bit.~~
-- ~~Everything in RAM.~~
-- ~~Multiply and divide in CPU.~~
+- Implement special keyboard input (backspace, control, etc.)
+- Interrupts for keyboard.
 - CamelCase everywhere?
 - Self-hosting compiler.
 - Better compiler errors.
@@ -62,3 +60,7 @@ What `run.sh` does:
 - Print string and new-line in the same function.
 - Output multiple files from assembler; concat them in the build script.
 - While updating screen, check if it is already set and then don't update.
+- ~~Remove docs/.~~
+- ~~16-bit to 64-bit.~~
+- ~~Everything in RAM.~~
+- ~~Multiply and divide in CPU.~~
