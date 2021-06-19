@@ -44,22 +44,17 @@ What `run.sh` does:
 - Runs the machine code on the CPU emulator.
 
 ## Todo
-- Implement special keyboard input (backspace, control, etc.)
-- Interrupts for keyboard.
-- CamelCase everywhere?
-- Self-hosting compiler.
-- Better compiler errors.
-- Optimize VM translator.
-- VM translator to RISC-V.
-- Implement for loop in Jack.
-- Hardware-based CPU emulator.
-- Optimized Python CPU emulator.
-- Provide isolation on CPU level?
-- Optimized graphics library in OS.
+- Registers outside the RAM (in the CPU).
 - Cursor and scroll support for text input.
-- Print string and new-line in the same function.
+- Print string and newline in the same function.
+- Implement special keyboard input (backspace, control, etc.)
 - Output multiple files from assembler; concat them in the build script.
 - While updating screen, check if it is already set and then don't update.
+- Coding style guide.
+- Interrupts for keyboard.
+- VM translator to RISC-V.
+- Hardware-based CPU emulator.
+- Optimized Python CPU emulator.
 - ~~Remove docs/.~~
 - ~~16-bit to 64-bit.~~
 - ~~Everything in RAM.~~
