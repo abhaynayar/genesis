@@ -8,7 +8,7 @@ import ctypes
 
 ################################################
 # Initializing file system:
-fs = open('fs.img', 'r+b') # Read and write binary file
+fs = open('disk.img', 'r+b') # Read and write binary file
 
 ################################################
 # Error stub:

@@ -2,3 +2,5 @@
 **/*.asm
 **/*.dbg
 **/*.hack
+
+disk.img

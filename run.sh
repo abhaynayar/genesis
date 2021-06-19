@@ -8,6 +8,9 @@ python3 compiler/JackCompiler.py kernel/
 python3 compiler/JackCompiler.py $target_dir/
 python3 compiler/JackCompiler.py userland/pong
 
+# Init file system
+echo "lostatitagain" > disk.img
+
 # Moving VM files to build directory
 mkdir -p build
 rm build/*
