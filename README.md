@@ -14,14 +14,6 @@ extending the Jack operating system.
 * **[File System](docs/fs.md)**
 
 ## Build
-Tested on Ubuntu 20.04.
-
-Get the code:
-
-```
-git clone https://github.com/abhaynayar/nand2tetris
-cd nand2tetris
-```
 
 For the CPU emulator, you need to install pygame.
 
@@ -30,11 +22,8 @@ pip3 install pygame
 ```
 
 For the compilation, translation and assembling of Jack programs, you will need
-Python3. You can run the entire system using `run.sh` in the root directory:
-
-```
-./run.sh
-```
+Python3. You can run the entire system using `run.sh` for Ubuntu or `run.bat`
+for Windows in the root directory.
 
 What `run.sh` does:
 - Compiles the `*.jack` files in `kernel/` and `userland/` directories.
