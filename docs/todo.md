@@ -1,0 +1,16 @@
+## Todo
+- Registers outside the RAM (in the CPU).
+- Cursor and scroll support for text input.
+- Print string and newline in the same function.
+- Implement special keyboard input (backspace, control, etc.)
+- Output multiple files from assembler; concat them in the build script.
+- While updating screen, check if it is already set and then don't update.
+- Coding style guide.
+- Interrupts for keyboard.
+- VM translator to RISC-V.
+- Hardware-based CPU emulator.
+- Optimized Python CPU emulator.
+- ~~Remove docs/.~~
+- ~~16-bit to 64-bit.~~
+- ~~Everything in RAM.~~
+- ~~Multiply and divide in CPU.~~
