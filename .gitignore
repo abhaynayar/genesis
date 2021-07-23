@@ -1,6 +1,1 @@
-**/*.vm
-**/*.asm
-**/*.dbg
-**/*.hack
-
-disk.img
+build

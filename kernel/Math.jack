@@ -1,7 +1,7 @@
 /**
  * A library of commonly used mathematical functions.
- * Note: Jack compilers now implements multiplication and division using
- *       Hack instruction set.
+ * UPDATE: The Jack compiler now implements multiplication and division
+ *    using the Hack instruction set.
  */
 
 class Math {
@@ -42,6 +42,10 @@ class Math {
         return bitArray[x];
     }
 
+    function int xor(int x, int y) {
+        return (x&(~y)) | ((~x)&y);
+    }
+
     /** Returns i'th bit of x */    
     function int bitExtract(int x, int i) {
         if ((x & bitArray[i]) = 0) {
@@ -49,7 +53,6 @@ class Math {
         }
         return 1;
     }
-
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {

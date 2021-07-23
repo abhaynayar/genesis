@@ -8,7 +8,7 @@ import ctypes
 
 ################################################
 # Initializing file system:
-fs = open('disk.img', 'r+b') # Read and write binary file
+fs = open('build/disk.img', 'r+b') # Read and write binary file
 
 ################################################
 # Error stub:
@@ -50,6 +50,34 @@ screen.fill(white)
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 pygame.display.update()
 
+key_translation = {
+    13: 128, #newline
+    8:  129, #backspace
+    1073741904: 130, #left
+    1073741906: 131, #up
+    1073741903: 132, #right
+    1073741905: 133, #down
+    1073741898: 134, #home
+    1073741901: 135, #end
+    1073741899: 136, #pgup
+    1073741902: 137, #pgdn
+    1073741897: 138, #insert
+    127: 139, #delete
+    27:  140, #escape
+    1073741882: 141, #f1
+    1073741883: 142, #f2
+    1073741884: 143, #f3
+    1073741885: 144, #f4
+    1073741886: 145, #f5
+    1073741887: 146, #f6
+    1073741888: 147, #f7
+    1073741889: 148, #f8
+    1073741890: 149, #f9
+    1073741891: 150, #f10
+    1073741892: 151, #f11
+    1073741893: 152, #f12
+}
+
 ################################################
 # The emulator class.
 class Emu:
@@ -75,10 +103,13 @@ class Emu:
         print("inst:", inst)
 
     def load_ram(self, address):
-        if address > 0xfffff: # We are in disk
+
+        if address > 0xfffff: # We *MAY* be in disk
             fs.seek(address-0x100000)
             return ord(fs.read(1))
-        else: return self.ram[address]
+        
+        else:
+            return self.ram[address]
 
     def store_ram(self, address, value):
         if address > 0xfffff: # We are in disk
@@ -105,34 +136,7 @@ class Emu:
         self.store_ram(KEYBOARD_ADDR, 0)
 
     def update_keyboard(self, keycode):
-        key_translation = {
-            13: 128, #newline
-            8:  129, #backspace
-            1073741904: 130, #left
-            1073741906: 131, #up
-            1073741903: 132, #right
-            1073741905: 133, #down
-            1073741898: 134, #home
-            1073741901: 135, #end
-            1073741899: 136, #pgup
-            1073741902: 137, #pgdn
-            1073741897: 138, #insert
-            127: 139, #delete
-            27:  140, #escape
-            1073741882: 141, #f1
-            1073741883: 142, #f2
-            1073741884: 143, #f3
-            1073741885: 144, #f4
-            1073741886: 145, #f5
-            1073741887: 146, #f6
-            1073741888: 147, #f7
-            1073741889: 148, #f8
-            1073741890: 149, #f9
-            1073741891: 150, #f10
-            1073741892: 151, #f11
-            1073741893: 152, #f12
-        }
-
+        global key_translation
         host = key_translation.get(keycode, keycode)
         self.store_ram(KEYBOARD_ADDR, host)
     

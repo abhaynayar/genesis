@@ -2,8 +2,8 @@ class Filesystem {
     function void init() {
         var int diskChar;
         let diskChar = Disk.peek(0);
-        do Output.printInt(diskChar);
-        do Output.println();
+        //do Output.printInt(diskChar);
+        //do Output.println();
         return;
     }
 }

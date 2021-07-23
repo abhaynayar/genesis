@@ -1,8 +1,0 @@
-debug/
-target/
-Cargo.lock
-**/*.rs.bk
-
-.appveyor.yml
-.travis.yml
-.cargo-ok
