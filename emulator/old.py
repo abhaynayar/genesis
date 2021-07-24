@@ -103,11 +103,9 @@ class Emu:
         print("inst:", inst)
 
     def load_ram(self, address):
-
         if address > 0xfffff: # We *MAY* be in disk
             fs.seek(address-0x100000)
             return ord(fs.read(1))
-        
         else:
             return self.ram[address]
 

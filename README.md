@@ -7,16 +7,23 @@ An extension of the Jack operating system (from the
 
 ## Build
 
-For the compilation, translation and assembling of Jack programs, you
-need [Python](https://www.python.org/downloads/).
+Tested on Ubuntu 20.04.
 
-For the CPU emulator, you need pygame.
+Clone the repository.
 
 ```
-pip3 install pygame
+git clone https://github.com/abhaynayar/quack
 ```
 
-Build and run the project using `run.bat` (Windows) or `run.sh` (Ubuntu).
+For the compilation, translation and assembling of Jack programs, you need
+[Python](https://www.python.org/downloads/). For the CPU emulator, you will need
+GCC and Make.
+
+Build and run the project using:
+
+```
+./run.sh
+```
 
 What the build script does:
 - Compiles the `*.jack` files in `kernel/` and `userland/` directories.
@@ -34,7 +41,6 @@ What the build script does:
 
 
 ## Todo
-
 Applications
 
 - [ ] Text Editor
@@ -59,7 +65,7 @@ Language
 System
 
 - [ ] File System
-- [ ] C++ Emulator
+- [x] C++ Emulator
 - [ ] Sound Support
 - [ ] Network Stack
 - [ ] Timer Interrupts
@@ -71,6 +77,6 @@ Misc.
 - [ ] Terminate compiler and batch script on error.
 - [ ] Check if Hack file is 64-bit before emulating.
 - [ ] Print string and newline in the same function.
+- [ ] Check if pixel is already set, if yes then don't update.
 - [ ] Implement special keyboard input. (backspace, control, etc.)
 - [ ] Output multiple files from assembler; concat them in the build script.
-- [ ] While updating screen, check if it is already set and then don't update.
