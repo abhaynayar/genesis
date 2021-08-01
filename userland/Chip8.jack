@@ -1,0 +1,11 @@
+class Chip8 {
+    function void main() {
+        do screen();
+        return;
+    }
+
+    function void screen() {
+        do Screen.drawRectangle(200,50,200+256,50+128);
+        return;
+    }
+}

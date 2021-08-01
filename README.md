@@ -1,9 +1,6 @@
-# Quack
+# Genesis
 
-An extension of the Jack operating system (from the
-[nand2tetris](https://nand2tetris.org) course).
-
-![](images/menu-23jul.png)
+Retro OS written in Jack (from the [nand2tetris](https://nand2tetris.org) course).
 
 ## Build
 
@@ -12,12 +9,12 @@ Tested on Ubuntu 20.04.
 Clone the repository.
 
 ```
-git clone https://github.com/abhaynayar/quack
+git clone https://github.com/abhaynayar/genesis
 ```
 
 For the compilation, translation and assembling of Jack programs, you need
 [Python](https://www.python.org/downloads/). For the CPU emulator, you will need
-GCC and Make.
+[pygame](https://www.pygame.org/).
 
 Build and run the project using:
 
@@ -74,6 +71,7 @@ System
 
 Misc.
 
+- [ ] Fonts with transparent backgrounds.
 - [ ] Terminate compiler and batch script on error.
 - [ ] Check if Hack file is 64-bit before emulating.
 - [ ] Print string and newline in the same function.

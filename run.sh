@@ -14,10 +14,9 @@ mv kernel/*.vm build/
 mv userland/*.vm build/
 
 # Translate
-python3 translator/translator.py build/
+python3 vm/vm.py build/
 python3 assembler/assembler.py build/out.asm
 
 # Emulate (python or cc)
-# python3 emulator/old.py build/out.hack
-(cd emulator && make)
-emulator/a.out build/out.hack
+python3 emulator/old.py build/out.hack
+#(cd emulator && make) && emulator/a.out build/out.hack

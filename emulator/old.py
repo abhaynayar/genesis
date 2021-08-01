@@ -3,7 +3,6 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 import sys
 import pygame
-import struct
 import ctypes
 
 ################################################
@@ -227,14 +226,20 @@ class Emu:
 emu = Emu()
 ticks = 0
 
+
+
+# TODO: Double buffering.
+
+# Allow only certain events:
+pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
+
 ################################################
 # Main driver program:
-running = True
-while running:
+while 1:
     emu.tick()
     ticks += 1
 
     for event in pygame.event.get():
-        if event.type==pygame.QUIT: running = False
+        if event.type==pygame.QUIT: exit(1)
         if event.type==pygame.KEYUP: emu.clear_keyboard()
         if event.type==pygame.KEYDOWN: emu.update_keyboard(event.key)

@@ -29,16 +29,16 @@ class Main {
 		}
 
         do Output.moveCursor(0,0);
-        do Output.printString("Quack");
+        do Output.printString("Genesis");
         
         let menuIndex = 0;
 
         do Output.moveCursor(3,5);
         do Output.printString("Text Editor");
         do Output.moveCursor(5,5);
-        do Output.printString("Graphics Editor");
+        do Output.printString("CHIP-8 Emulator");
         do Output.moveCursor(7,5);
-        do Output.printString("Web Browser");
+        do Output.printString("Japanese Tutor");
         do Output.moveCursor(9,5);
         do Output.printString("Exit");
         do Output.println();
@@ -56,6 +56,10 @@ class Main {
 
             if ((key=128) & (menuIndex=0)) {
                 do TextEditor.main();
+            }
+
+            if ((key=128) & (menuIndex=1)) {
+                do Chip8.main();
             }
 
             if ((key=128) & (menuIndex=3)) {

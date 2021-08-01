@@ -22,29 +22,20 @@ class Emu {
 public:
 
     int64_t pc, ra, rd, rm;
-    //uint64_t ram[RAM_SIZE];
     std::vector<uint64_t> ram;
     SDL_Renderer* m_renderer;
 
     Emu(SDL_Renderer* renderer): m_renderer(renderer), ram(RAM_SIZE,0) {}
-    void set_pixel(int x, int y, int color) {
 
+    void set_pixel(int x, int y, int color) {
         if (x>SCREEN_WIDTH || y>SCREEN_HEIGHT || x<0 || y<0) return;
         SDL_SetRenderDrawColor(m_renderer, color, color, color, SDL_ALPHA_OPAQUE);
         SDL_RenderDrawPoint(m_renderer, x, y);
         SDL_RenderPresent(m_renderer);
-
-        //const unsigned int offset = (SCREEN_WIDTH*4*y) + x*4;
-        //pixels[offset+0] = color;               // b
-        //pixels[offset+1] = color;               // g
-        //pixels[offset+2] = color;               // r
-        //pixels[offset+3] = SDL_ALPHA_OPAQUE;    // a
     }
 
-
     void store_ram(uint64_t address, uint64_t value) {
-
-        if (address > 0xfffff) {
+        if (address > 0xFFFFF) {
             err("We are in disk.");
         }
 
@@ -58,9 +49,9 @@ public:
         for (int i=15; i>=0; --i) {
             int set = value & (1<<i);
             if (set != 0) {
-                set_pixel((x*16)+i, y, 0xFF);
-            } else {
                 set_pixel((x*16)+i, y, 0x00);
+            } else {
+                set_pixel((x*16)+i, y, 0xFF);
             }
         }
     }
@@ -169,7 +160,6 @@ public:
         return ram[address];
     }
 
-
     void tick() {
         rm = load_ram(ra);
         uint64_t inst = load_ram(ROM_OFFSET+pc);
@@ -197,19 +187,20 @@ public:
 };
 
 int main(int argc, char** argv){
+
     if(argc != 2) {
         puts("usage: emu [HACK_FILE]");
         return 1;
     }
 
-    //File
+    // File
     std::string arg1(argv[1]);
     std::ifstream infile; infile.open(arg1, std::ios::in);
     std::vector<std::string> file_contents; std::string temp;
     while(getline(infile, temp)) file_contents.push_back(temp);
     infile.close();
 
-    //Gfx
+    // Gfx
     SDL_Init(SDL_INIT_EVERYTHING);
 
     SDL_Window* window = SDL_CreateWindow (
@@ -224,26 +215,32 @@ int main(int argc, char** argv){
     SDL_Event event;
     bool running = true;
 
-    //Emulator
+    // Emulator
     Emu emu(renderer);
     emu.load_rom(file_contents);
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
-    
+
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawPoint(renderer, 10, 10);
+    SDL_RenderPresent(renderer);
     puts("Starting emulator.");
 
-    //Loop
+    int i=0;
+
+    // Loop
     while (running) {
         emu.tick();
-
         while (SDL_PollEvent(&event)) {
             if ((SDL_QUIT == event.type) || (SDL_KEYDOWN == event.type &&
-                 SDL_SCANCODE_ESCAPE == event.key.keysym.scancode)) {
+                        SDL_SCANCODE_ESCAPE == event.key.keysym.scancode)) {
                 running = false;
                 break;
             }
         }
+        i++;
     }
 
     SDL_DestroyRenderer(renderer);
@@ -251,4 +248,3 @@ int main(int argc, char** argv){
     SDL_Quit();
     return 0;
 }
-

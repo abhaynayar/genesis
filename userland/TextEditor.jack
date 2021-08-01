@@ -3,14 +3,14 @@ class TextEditor {
         var String s;
 
         // do Screen.drawRectangle(200,10,500,240);
-        do Screen.drawLine(200,10,200,240);
-        do Screen.drawLine(200,10,500,10);
-        do Screen.drawLine(500,10,500,240);
+        do Screen.drawLine(200,20,200,240);
+        do Screen.drawLine(200,20,500,20);
+        do Screen.drawLine(500,20,500,240);
         do Screen.drawLine(200,240,500,240);
 
         // Let's go!!!
         do Output.moveCursor(2,27);
-        do Output.printString("Text Editor v0.1.0");
+        do Output.printString("Text Editor");
         do Screen.drawLine(200,45,500,45);
         do Output.moveCursor(5,27);        
         return;

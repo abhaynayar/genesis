@@ -143,8 +143,8 @@ class Output {
 
     function void create(int index, int a, int b, int c, int d, int e,
                          int f, int g, int h, int i, int j, int k) {
-	var Array map;
-	let map = Array.new(11);
+        var Array map;
+        let map = Array.new(11);
         let charMaps[index] = map;
         let map[0] = a;
         let map[1] = b;
@@ -190,6 +190,10 @@ class Output {
     /** Displays the given character at the cursor location,
      *  and advances the cursor one column forward. */
     function void printChar(char c) {
+            
+            // Fonts are 8 pixels wide. Memory cells are 16 pixels wide.
+            // Since the screen is memory mapped, we need to know
+            // whether the char is on an odd column, or an even column.
 
         var int i, j, address;
         var int old, new;
@@ -204,23 +208,27 @@ class Output {
         let i=0;
         let address = SCREEN_BASE + ((i+1)*32) + (cx/2) + (cy*32*11);
         while(i<11) {
+
+            //let j=0;
+            //while (j<8) {
+
+                ///*
+                let old = memory[address];
+                
+                if ((cx&1) = 1) {
+                    let old = old & 255;
+                    let new = old | (map[i]*256);
+                } else {
+                    let old = old & (-256);
+                    let new = old | map[i];
+                }
+                
+                let memory[address] = new;
+                let address = address + 32;
+                //*/
+                //let j=j+1;
+            //}
             
-            let old = memory[address];
-            
-            // Fonts are 8 pixels wide. Memory cells are 16 pixels wide.
-            // Since the screen is memory mapped, we need to know
-            // whether the char is on an odd column, or an even column.
-            
-            if ((cx&1) = 1) {
-                let old = old & 255;
-                let new = old | (map[i]*256);
-            } else {
-                let old = old & (-256);
-                let new = old | map[i];
-            }
-            
-            let memory[address] = new;
-            let address = address + 32;
             let i=i+1;
         }
 

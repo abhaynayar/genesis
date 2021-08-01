@@ -1,2 +1,2 @@
 all:
-	g++ -ggdb new.cc `pkg-config --cflags --libs sdl2`
+	g++ -g new.cc `pkg-config --cflags --libs sdl2`
