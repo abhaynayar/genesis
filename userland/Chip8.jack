@@ -1,11 +1,40 @@
 class Chip8 {
-    function void main() {
-        do screen();
+
+    static Array GFX;
+    static Array V;
+    static int PC;
+    static int I;
+
+    static Array Memory;
+
+    function void init() {
+        let I = 0;
+        let PC = 512;
+        let GFX = Array.new(32*64);
+        let Memory = Array.new(4096);
         return;
     }
 
-    function void screen() {
-        do Screen.drawRectangle(200,50,200+256,50+128);
+    function void main() {
+        do init();
+        do drawOutline();
+        return;
+    }
+
+    function int getVF() {
+        return V[15];
+    }
+
+    function void setVF(int x) {
+        let V[15] = x;
+        return;
+    }
+
+    function void drawOutline() {
+        do Screen.drawLine(200,50,200+256,50); // top
+        do Screen.drawLine(200,50,200,50+128); // left
+        do Screen.drawLine(200+256,50,200+256,50+128); // right
+        do Screen.drawLine(200,50+128,200+256,50+128); // bottom
         return;
     }
 }

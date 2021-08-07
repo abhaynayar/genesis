@@ -11,7 +11,6 @@ def list_files(directory, extension):
 
 # input should be a single "*.jack" file
 def handleSingleFile(infile):
-    print(infile)
     ce = CompilationEngine.CompilationEngine(infile)
 
 def main():

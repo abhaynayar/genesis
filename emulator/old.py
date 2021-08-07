@@ -91,8 +91,11 @@ class Emu:
 
     def __init__(self):
         infile = open(sys.argv[1]).readlines()
+        size = 0
         for i,line in enumerate(infile):
             self.ram[CODE_START+i] = int(line,2)
+            size += 1
+        print(str(int((size/CODE_SIZE)*100)) + '% CODE MEMORY USED')
 
     def dump_regs(self, inst):
         print("pc:", self.pc, end=", ")
@@ -224,9 +227,6 @@ class Emu:
         self.pc += 1
 
 emu = Emu()
-ticks = 0
-
-
 
 # TODO: Double buffering.
 
@@ -237,8 +237,6 @@ pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
 # Main driver program:
 while 1:
     emu.tick()
-    ticks += 1
-
     for event in pygame.event.get():
         if event.type==pygame.QUIT: exit(1)
         if event.type==pygame.KEYUP: emu.clear_keyboard()
