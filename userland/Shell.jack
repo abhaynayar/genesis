@@ -3,16 +3,13 @@ class Shell {
         var char c, key;
     	var String s;
     	var boolean ok;
-    
         while (true) {
-            
             let s = Keyboard.readLine("$ ");
-
-            if (String.compare(s,"pong") = 0) {
-                do Output.printString("YES!");
-                do PongMain.main();
+            do Output.printString(s);
+            if (String.compare(s,"vi") = 0) {
+                do Vim.main();
             } else {
-                do Output.printString("NOO!");
+                do Output.printString("Command not found.");
             }
 
             do Output.println();

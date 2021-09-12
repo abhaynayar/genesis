@@ -40,34 +40,29 @@ What the build script does:
 ## Todo
 Applications
 
-- [ ] Text Editor
-- [ ] GUI Toolkit
-- [ ] Japanese Font
-- [ ] Splash Screen
-- [ ] Blinking Cursor
-- [ ] Animated Sprites
+- [ ] Text Editor (backspace, multi-threading, SHIFT key)
 - [ ] Chip8 Interpreter
-- [ ] Graphics Editor
-- [ ] Web Browser
+- [ ] GUI Toolkit
 
 Language
 
 - [ ] Hex numbers
-- [ ] Code coverage
 - [x] XOR operations
-- [ ] Inline assembly
+- [ ] Code coverage
+- [ ] Error handling
 - [ ] Shift operations
+- [ ] Inline assembly
 - [ ] Coding style guide
 
 System
 
-- [ ] File System
 - [x] C++ Emulator
+- [ ] File System
 - [ ] Sound Support
-- [ ] Network Stack
 - [ ] Timer Interrupts
+- [ ] Network Stack
 - [ ] Keyboard Interrupts
-- [ ] Hardware-based CPU emulator
+- [x] Hardware-based CPU emulator
 
 Misc.
 

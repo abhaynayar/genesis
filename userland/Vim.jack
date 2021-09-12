@@ -1,0 +1,56 @@
+class Vim {
+    function void insertMode() {
+        var char temp;
+        do Output.moveCursor(0,0);
+        do Output.printChar(1);
+        do Output.moveCursor(22,0);
+        do Output.printString("-- INSERT --");
+        do Output.moveCursor(0,0);
+        while (true) {
+            while (Keyboard.keyPressed() = 0) {}
+            let temp = Keyboard.keyPressed();
+            while(~(Keyboard.keyPressed() = 0)) {}
+            do Output.backSpace();
+            do Output.printChar(temp);
+            do Output.printChar(1);
+        }
+
+        return;
+    }
+
+    function void clear() {
+        //do Screen.clearScreen();
+        do Output.moveCursor(0,0);
+        do Output.printString("     ");
+        return;
+    }
+
+    function void tilde() {
+        var int i;
+        let i=0;
+        while (~(i=21)) {
+            do Output.printChar(126);
+            do Output.println();
+            let i=i+1;
+        }
+        return;
+    }
+
+    function void main() {
+        var char x;
+
+        do clear();
+        do Output.moveCursor(0,0);
+        do Output.printChar(0);
+        do Output.println();
+        do tilde();
+        
+        while (true) {
+            let x = Keyboard.readChar();
+            if (x=105) {
+                do insertMode();
+            }
+        }
+        return;
+    }
+}

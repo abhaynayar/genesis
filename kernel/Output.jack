@@ -27,8 +27,8 @@ class Output {
         let charMaps = Array.new(127);
         
         // Black square, used for displaying non-printable characters.
-        //do Output.create(0,63,63,63,63,63,63,63,63,63,0,0);
-        //do Output.create(0,0,0,0,0,0,0,0,0,0,0,0);
+        do Output.create(0,63,63,63,63,63,63,63,63,63,0,0);
+        do Output.create(1,1,1,1,1,1,1,1,1,1,1,1);          // space
 
         // Assigns the bitmap for each character in the charachter set.
         // The first parameter is the character index, the next 11 numbers
@@ -136,8 +136,7 @@ class Output {
         do Output.create(124,12,12,12,12,12,12,12,12,12,0,0);  // |
         do Output.create(125,7,12,12,12,56,12,12,12,7,0,0);    // }
         do Output.create(126,38,45,25,0,0,0,0,0,0,0,0);        // ~
-        do Output.create(126,1,3,7,15,31,63,31,15,7,3,1);      // arrow
-
+        //do Output.create(126,1,3,7,15,31,63,31,15,7,3,1);      // arrow
 	    return;
     }
 
@@ -164,15 +163,16 @@ class Output {
     // If the given character is invalid or non-printable, returns the
     // character map of a black square.
     function Array getMap(char c) {
-        if ((c < 32) | (c > 126)) {
-            let c = 0;
-        }
+        //if ((c < 32) | (c > 126)) {
+        //    let c = 0;
+        //}
         return charMaps[c];
     }
     
     /** Moves the cursor to the j-th column of the i-th row,
      *  and erases the character displayed there. */
     function void moveCursor(int i, int j) {
+        //TODO: highlight where the cursor is.
         let cy = i;
         let cx = j;
 
@@ -183,57 +183,83 @@ class Output {
         // Handling underflows
         if (cy < 0) { do Output.moveCursor(0,0);     }
         if (cx < 0) { do Output.moveCursor(cy-1,22); }
-        
         return;
     }
 
     /** Displays the given character at the cursor location,
      *  and advances the cursor one column forward. */
     function void printChar(char c) {
-            
-            // Fonts are 8 pixels wide. Memory cells are 16 pixels wide.
-            // Since the screen is memory mapped, we need to know
-            // whether the char is on an odd column, or an even column.
 
         var int i, j, address;
         var int old, new;
         var Array map;
-        var boolean asdf;
-        
-        let map = Output.getMap(c);
 
-        //let address = SCREEN_BASE+(32*(0+1))+(cx/2)+(cy*32*11);
-        //let memory[address] = memory[address] | 
+        if (((c > 31) & (c < 127)) | ((c=0) | (c=1))) {
+    
+            // Fonts are 8 pixels wide. Memory cells are 16 pixels wide.
+            // Since the screen is memory mapped, we need to know
+            // whether the char is on an odd column, or an even column.
+            let map = Output.getMap(c);
 
+            //let address = SCREEN_BASE+(32*(0+1))+(cx/2)+(cy*32*11);
+            //let memory[address] = memory[address] | 
+            let i=0;
+            let address = SCREEN_BASE + ((i+1)*32) + (cx/2) + (cy*32*11);
+            while(i<11) {
+
+                //let j=0;
+                //while (j<8) {
+
+                    ///*
+                    let old = memory[address];
+                    
+                    if ((cx&1) = 1) {
+                        let old = old & 255;
+                        let new = old | (map[i]*256);
+                    } else {
+                        let old = old & (-256);
+                        let new = old | map[i];
+                    }
+                    
+                    let memory[address] = new;
+                    let address = address + 32;
+                    //*/
+                    //let j=j+1;
+                //}
+                
+                let i=i+1;
+            }
+
+            // Advance the cursor one column forward
+            do Output.moveCursor(cy,cx+1);
+
+        } else {
+
+            //enter
+            if (c=128) {
+                do clearChar();
+                do println();
+            }
+
+            //backspace
+            if (c=129) {
+                do clearChar();
+                do backSpace();
+            }
+        }
+        return;
+    }
+
+    function void clearChar() {
+        var int i, address;
         let i=0;
         let address = SCREEN_BASE + ((i+1)*32) + (cx/2) + (cy*32*11);
         while(i<11) {
-
-            //let j=0;
-            //while (j<8) {
-
-                ///*
-                let old = memory[address];
-                
-                if ((cx&1) = 1) {
-                    let old = old & 255;
-                    let new = old | (map[i]*256);
-                } else {
-                    let old = old & (-256);
-                    let new = old | map[i];
-                }
-                
-                let memory[address] = new;
-                let address = address + 32;
-                //*/
-                //let j=j+1;
-            //}
-            
+            let memory[address] = 0;
+            let address = address + 32;
             let i=i+1;
         }
 
-        // Advance the cursor one column forward
-        do Output.moveCursor(cy,cx+1);
         return;
     }
 
