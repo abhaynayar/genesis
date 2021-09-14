@@ -1,19 +1,26 @@
+//TODO: keep a shell buffer (for faster clearing of screen).
+//  for example: if you know where characters are, you only need to clear
+//  those areas where they are, instead of clearing the entire screen.
+
 class Shell {
     function void main() {
         var char c, key;
     	var String s;
     	var boolean ok;
-        while (true) {
+        
+		while (true) {
             let s = Keyboard.readLine("$ ");
-            do Output.printString(s);
-            if (String.compare(s,"vi") = 0) {
-                do Vim.main();
-            } else {
-                do Output.printString("Command not found.");
-            }
+
+            if (String.compare(s,"vim") = 0) {
+				do Vim.main();
+			} else {
+				do Output.printString(s);
+				do Output.printString(": Command not found.");
+			}
 
             do Output.println();
 	    }
+
         return;
     }
 }

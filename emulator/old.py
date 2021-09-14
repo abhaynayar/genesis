@@ -42,7 +42,7 @@ CODE_SIZE  = CODE_END - CODE_START + 1
 resolution = (width, height) = (512, 256)
 flags = pygame.DOUBLEBUF
 
-screen = pygame.display.set_mode(resolution)
+screen = pygame.display.set_mode(resolution, pygame.RESIZABLE)
 screen.set_alpha(None)
 screen.fill(white)
 

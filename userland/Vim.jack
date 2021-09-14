@@ -1,4 +1,9 @@
+//TODO: keep a text buffer.
+
 class Vim {
+	static int cx;
+	static int cy;
+
     function void insertMode() {
         var char temp;
         do Output.moveCursor(0,0);
@@ -10,22 +15,23 @@ class Vim {
             while (Keyboard.keyPressed() = 0) {}
             let temp = Keyboard.keyPressed();
             while(~(Keyboard.keyPressed() = 0)) {}
-            do Output.backSpace();
-            do Output.printChar(temp);
-            do Output.printChar(1);
+
+			if ((temp>31) & (temp<130)) {
+            	do Output.backSpace();
+            	do Output.printChar(temp);
+            	do Output.printChar(1);
+			} else {
+				if (temp=140) //ESC
+				{
+					return;
+				}
+			}
         }
 
         return;
     }
 
-    function void clear() {
-        //do Screen.clearScreen();
-        do Output.moveCursor(0,0);
-        do Output.printString("     ");
-        return;
-    }
-
-    function void tilde() {
+    function void fillTildes() {
         var int i;
         let i=0;
         while (~(i=21)) {
@@ -37,19 +43,25 @@ class Vim {
     }
 
     function void main() {
-        var char x;
-
-        do clear();
+        var char temp;
+        do Screen.clearScreen();
         do Output.moveCursor(0,0);
         do Output.printChar(0);
         do Output.println();
-        do tilde();
-        
+        do fillTildes();
+
         while (true) {
-            let x = Keyboard.readChar();
-            if (x=105) {
+            let temp = Keyboard.readChar();
+            if (temp=105) {
                 do insertMode();
             }
+			
+			do Output.clearChar();
+			do Output.backSpace();
+			do Output.backSpace();
+			do Output.printChar(0);
+			do Output.moveCursor(22,0);
+			do Output.printString("               ");
         }
         return;
     }

@@ -6,7 +6,6 @@ class Chip8 {
     static int I;
 
     static Array Memory;
-
     function void init() {
         let I = 0;
         let PC = 512;

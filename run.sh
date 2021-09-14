@@ -1,6 +1,5 @@
 # Create and clean build directory
 mkdir -p build
-rm build/*
 
 # Dummy file system contents
 echo 1337 > build/disk.img

@@ -1,5 +1,5 @@
 class GUI {
-  function void main() {
+	function void main() {
         var boolean exit;
         var char key;
         var int menuIndex;

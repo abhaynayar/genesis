@@ -36,11 +36,13 @@ What the build script does:
 * **[Memory Layout](docs/memory-layout.md)**
 * **[Interrupts](docs/interrupts.md)**
 
-
 ## Todo
 Applications
 
-- [ ] Text Editor (backspace, multi-threading, SHIFT key)
+- [ ] Text Editor
+	- Hold key for multi-input.
+	- SHIFT key support.
+	- Backspace support.
 - [ ] Chip8 Interpreter
 - [ ] GUI Toolkit
 
