@@ -7,7 +7,7 @@ import ctypes
 
 ################################################
 # Initializing file system:
-fs = open('build/disk.img', 'r+b') # Read and write binary file
+fs = open('disk.img', 'r+b') # Read and write (binary file)
 
 ################################################
 # Error stub:
@@ -229,14 +229,14 @@ class Emu:
 emu = Emu()
 
 # TODO: Double buffering.
-
 # Allow only certain events:
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
+ticks_per_tick = 1000 # TODO: what's the optimal value?
 
 ################################################
 # Main driver program:
 while 1:
-    emu.tick()
+    for i in range(ticks_per_tick): emu.tick()
     for event in pygame.event.get():
         if event.type==pygame.QUIT: exit(1)
         if event.type==pygame.KEYUP: emu.clear_keyboard()

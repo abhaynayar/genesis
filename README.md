@@ -35,8 +35,12 @@ What the build script does:
 * **[Architecture](docs/architecture.md)**
 * **[Memory Layout](docs/memory-layout.md)**
 * **[Interrupts](docs/interrupts.md)**
+* **[File System](docs/file-system.md)**
 
 ## Todo
+
+**I would love contributions towards making the emulator faster.**
+
 Applications
 
 - [ ] Text Editor

@@ -7,12 +7,24 @@ class Shell {
         var char c, key;
     	var String s;
     	var boolean ok;
+
+        do Output.printString("Available commands: ");
+        do Output.println();
+
+        // List of commands:
+        do Output.printString("vim");
+        do Output.println();
+        do Output.printString("chip8");
+        do Output.println();
+        do Output.println();
         
 		while (true) {
             let s = Keyboard.readLine("$ ");
 
             if (String.compare(s,"vim") = 0) {
 				do Vim.main();
+            else if (String.compare(s,"chip8") = 0) {
+				do Chip8.main();
 			} else {
 				do Output.printString(s);
 				do Output.printString(": Command not found.");

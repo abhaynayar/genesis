@@ -2,7 +2,8 @@
 mkdir -p build
 
 # Dummy file system contents
-echo 1337 > build/disk.img
+#echo 1337 > disk.img
+# Right now we're using zero.ch8
 
 # Compile kernel/ and $target_dir/
 python3 compiler/JackCompiler.py kernel/

@@ -1,23 +1,33 @@
 class Chip8 {
-
-    static Array GFX;
-    static Array V;
-    static int PC;
-    static int I;
-
     static Array Memory;
+    static Array GFX;    // Screen
+    static Array V;      // Registers
+    static int PC;       // Program counter
+    static int I;        // 12 bits wide
+
     function void init() {
-        let I = 0;
-        let PC = 512;
-        let GFX = Array.new(32*64);
         let Memory = Array.new(4096);
+        let GFX = Array.new(32*64);
+        let PC = 512;
+        let I = 0;
         return;
     }
 
     function void main() {
-        do init();
         do drawOutline();
+        do init();
+        do fillRom();
         return;
+    }
+
+    function void fillRom() {
+        var int i; let i=0;
+        while (i<144) {
+            //do Output.printInt(Disk.peek(i));
+            //do Output.printString(", ");
+            let Memory[i+512] = Disk.peek(i);
+            let i=i+1;
+        }
     }
 
     function int getVF() {
@@ -37,3 +47,4 @@ class Chip8 {
         return;
     }
 }
+
