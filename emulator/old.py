@@ -174,9 +174,7 @@ class Emu:
         #  Extended custom instructions:
         elif comp == 0x41: return self.rm*self.rd
         elif comp == 0x43: return int(self.rm/self.rd)
-        elif comp == 0x44:
-            print('hit xor')
-            return self.rm^self.rd
+        elif comp == 0x44: return self.rm^self.rd
         else: err("Invalid comp value: " + hex(comp))
     
     def dest_res(self, dest, comp_res):
@@ -234,7 +232,7 @@ emu = Emu()
 # TODO: Double buffering.
 # Allow only certain events:
 pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN, pygame.KEYUP])
-ticks_per_tick = 1000 # TODO: what's the optimal value?
+ticks_per_tick = 10000 # TODO: what's the optimal value?
 
 ################################################
 # Main driver program:

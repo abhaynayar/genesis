@@ -81,3 +81,7 @@ Misc.
 - [ ] Check if pixel is already set, if yes then don't update.
 - [ ] Implement special keyboard input. (backspace, control, etc.)
 - [ ] Output multiple files from assembler; concat them in the build script.
+
+Bugs
+
+- [x] Why does XOR only work with a space? => Was not added in JackType.symbols.
