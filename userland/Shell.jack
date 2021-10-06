@@ -1,4 +1,6 @@
-//TODO: keep a shell buffer (for faster clearing of screen).
+//  TODO: keep a shell buffer
+//
+//  Shell buffer can also be used for faster clearing of screen.
 //  for example: if you know where characters are, you only need to clear
 //  those areas where they are, instead of clearing the entire screen.
 
@@ -7,9 +9,6 @@ class Shell {
         var char c, key;
     	var String s;
     	var boolean ok;
-
-        //DEBUG:
-        do Chip8.main();
 
         do Output.printString("Available commands: ");
         do Output.println();

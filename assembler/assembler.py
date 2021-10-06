@@ -153,6 +153,7 @@ def main():
     comp_map["M*D"] = "1000001"
     comp_map["M/D"] = "1000011"
     comp_map["M^D"] = "1000100"
+    comp_map["M%D"] = "1000101"
 
     dest_map[""] = "000"
     dest_map["M"] = "001"

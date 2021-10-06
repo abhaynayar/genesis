@@ -1,8 +1,8 @@
 class Chip8 {
     // CPU:
-    static int I;        // 12 bits wide
-    static int PC;       // Program counter
-    static Array V;      // Registers
+    static int I;
+    static int PC;
+    static Array V;
 
     // RAM:
     static int SP;
@@ -11,17 +11,79 @@ class Chip8 {
 
     // Timers:
     static int delayTimer;
+    static int soundTimer;
+
+    // Outline:
+    static int bx;
+    static int by;
 
     function void init() {
         // CPU:
+        let I = 0;
         let PC = 512;
         let V = Array.new(16);
-        let I = 0;
 
         // RAM:
         let RAM = Array.new(4096);
         let Stack = Array.new(16);
+
+        // Outline:
+        let bx = 350;
+        let by = 50;
         return;
+    }
+
+    function void main() {
+        var int opcode;
+        do Output.printString("Loading ROM: Zero.ch8");
+
+        do init();
+        do drawBox();
+        do loadRom();
+
+        while (true) {
+            let opcode = fetch();
+            do Chip8.execute(opcode);
+        }
+        return;
+    }
+
+    function void drawBox() {
+        do Screen.drawLine(bx,    by,    bx+64,  by);      // top
+        do Screen.drawLine(bx,    by,    bx,     by+32);   // left
+        do Screen.drawLine(bx+64, by,    bx+64,  by+32);   // right
+        do Screen.drawLine(bx,    by+32, bx+64,  by+32);   // bottom
+        return;
+    }
+
+    function void loadRom() {
+        var int i;
+        let i=0;
+
+        // Hard-coded: getting ROM from disk.
+        while (i<144) {
+            let RAM[i+512] = Disk.peek(i);
+            let i=i+1;
+        }
+    }
+
+    function int fetch() {
+        return ((RAM[PC+1]) | (RAM[PC]*256));
+    }
+
+    function void setGfx(int row, int column, boolean color) {
+        // TODO: check for bounds.
+        do Screen.setColor(color);
+        do Screen.drawPixel(bx+column, by+row);
+        return;
+    }
+
+    function boolean getGfx(int row, int column) {
+        if (Screen.getPixel(bx+column, by+row)=0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     function void push(int address) {
@@ -35,33 +97,6 @@ class Chip8 {
         return Stack[SP];
     }
 
-    function void main() {
-        var int opcode;
-        do drawOutline();
-
-        do init();
-        do fillRom();
-
-        while (true) {
-            // Fetch:
-            let opcode = fetch();
-
-            // DEBUG:
-            // do Output.moveCursor(0,0);
-            // do Output.printString("         ");
-            // do Output.moveCursor(0,0);
-            // do Output.printInt(opcode);
-
-            // Decode & Execute:
-            do Chip8.execute(opcode);
-        }
-        return;
-    }
-
-    function int fetch() {
-        return ((RAM[PC+1]) | (RAM[PC]*256));
-    }
-
     function int getVF() {
         return V[15];
     }
@@ -71,39 +106,7 @@ class Chip8 {
         return;
     }
 
-    function void drawOutline() {
-        do Screen.drawLine(200,50,200+64,50);         // top
-        do Screen.drawLine(200,50,200,50+32);         // left
-        do Screen.drawLine(200+64,50,200+64,50+32);   // right
-        do Screen.drawLine(200,50+32,200+64,50+32);   // bottom
-        return;
-    }
-
-    function void fillRom() {
-        var int i; let i=0;
-        while (i<144) {
-            let RAM[i+512] = Disk.peek(i);
-            let i=i+1;
-        }
-    }
-
-    function void setGfx(int row, int column, boolean color) {
-        // TODO: check for bounds
-        do Screen.setColor(color);
-        do Screen.drawPixel(200+column, 50+row);
-        return;
-    }
-
-    function boolean getGfx(int row, int column) {
-        if (Screen.getPixel(200+column, 50+row)=0) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
     function void execute(int opcode) {
-
         var int upper;
         var int lower;
         var int rand;
@@ -111,22 +114,20 @@ class Chip8 {
         var int X,Y,N,NN;
         var int i,j,sum;
 
-        var boolean collision_flag;
+        var boolean collisionFlag;
         var int switchLower;
         var int currentByte;
         var int currentBit;
         var int actualBit;
 
-        // --- END OF DECLARATIONS --- //
-
-        //FIXME: rand should be a random number (0-255)
+        //TODO: generate random number. (<256)
         let rand=128;
 
         let upper = (opcode & 61440) / 4096;
         let lower = opcode & 4095;
 
         if (upper=0) {
-            if (lower = 224) {
+            if (lower=224) {
                 let i=0;
                 while (i<32) {
                 let j=0;
@@ -142,10 +143,9 @@ class Chip8 {
                 let PC = pop();
             }
 
-            // Else: not necessary for most ROMs.
-            do Output.println();
+            do Output.printString("Unimplemented upper=0, lower=");
             do Output.printInt(lower);
-            do Sys.wait(5);
+            do Sys.halt();
         }
 
         if (upper=1) {
@@ -155,15 +155,14 @@ class Chip8 {
 
         if (upper=2) {
             // 2NNN: call subroutine at NNN.
-            do push(PC);
+            do Chip8.push(PC);
             let PC = lower-2;
-            return;
         }
 
         if (upper=3) {
             let X = (lower&3840)/256;
             let NN = (lower&255);
-            if (~(V[X]=NN)) {
+            if (V[X]=NN) {
                 let PC = PC+2;
             }
         }
@@ -171,7 +170,7 @@ class Chip8 {
         if (upper=4) {
             let X = (lower&3840)/256;
             let NN = (lower&255);
-            if (V[X]=NN) {
+            if (~(V[X]=NN)) {
                 let PC = PC+2;
             }
         }
@@ -210,7 +209,6 @@ class Chip8 {
                 let sum = V[X] + V[Y];
                 let V[X] = sum&255;
 
-                // Carry Flag:
                 if (sum>255) {
                     let V[15] = 1;
                 } else {
@@ -223,7 +221,6 @@ class Chip8 {
                 let sum = V[X] - V[Y];
                 let V[X] = sum & 255;
 
-                // Borrow Flag:
                 if (sum<0) {
                     let V[15] = 0;
                 } else {
@@ -240,7 +237,6 @@ class Chip8 {
                 let sum = V[Y] - V[X];
                 let V[X] = sum & 255;
 
-                // Borrow Flag:
                 if (sum<0) {
                     let V[15] = 0;
                 } else {
@@ -281,7 +277,7 @@ class Chip8 {
             let X = (lower&3840)/256;
             let Y = (lower&240)/16;
             let N = (lower&15);
-            let collision_flag = false;
+            let collisionFlag = false;
 
             let j=0;
             while (j<N) {
@@ -292,13 +288,8 @@ class Chip8 {
                     let actualBit = Chip8.getGfx(V[Y]+j, V[X]+i);
             
                     if ((currentBit=1) & (currentBit=actualBit)) {
-                        let collision_flag = true;
+                        let collisionFlag = true;
                     }
-
-                    // do Output.printInt(currentBit);
-                    // do Output.printInt(actualBit);
-                    // do Output.printInt(currentBit^actualBit);
-                    // do Output.println();
 
                     if ((currentBit^actualBit)=1) {
                         do Chip8.setGfx(V[Y]+j, V[X]+i, true);
@@ -311,42 +302,41 @@ class Chip8 {
                 let j=j+1;
             }
 
-            if (collision_flag=1) {
+            if (collisionFlag=1) {
                 let V[15] = 1;
             } else {
                 let V[15] = 0;
             }
         }
 
-
         if (upper=14) {
-            // TODO: Don't need keypress stuff right now.
-            do Output.printString("We're in upper=14.");
-            return;
+            // TODO: Implement this opcode.
+            do Output.printString("Unimplemented upper=14.");
+            do Sys.halt();
         }
-
-        // 64021 (15,2581): X=5
 
         if (upper=15) {
             let X = (lower&3840)/512;
             let switchLower = lower&255;
-/*
+
             if (switchLower=7) {
-                //TODO
+                let V[X] = delayTimer;
             }
 
             if (switchLower=10) {
-                //TODO
+                //TODO: Implement this opcode.
+                do Output.printString("Unimplemented upper=15, lower=10.");
+                do Sys.halt();
             }
-*/
+
             if (switchLower=21) {
                 let delayTimer = V[X];
             }
-/*
+
             if (switchLower=24) {
-                //TODO
+                let soundTimer = V[X];
             }
-*/
+
             if (switchLower=30) {
                 let I = I+V[X];
             }
@@ -354,11 +344,13 @@ class Chip8 {
             if (switchLower=41) {
                 let I = V[X]*5;
             }
-/*
+
             if (switchLower=51) {
-                //TODO
+                let RAM[I] = (V[X]/100)%10;
+                let RAM[I+1] = (V[X]/10)%10;
+                let RAM[I+2] = V[X]%10;
             }
-*/
+
             if (switchLower=85) {
                 let i=0;
                 while (i<16) {
@@ -374,16 +366,13 @@ class Chip8 {
                 }
             }
 
-            // Else: we halt.
-            // do Output.moveCursor(1,0);
-            // do Output.printString("       ");
-            // do Output.moveCursor(1,0);
-            // do Output.printInt(switchLower);
-            do Sys.wait(5);
+            if (~(switchLower=21)) {
+                do Output.printInt(switchLower);
+                do Sys.halt();
+            }
         }
 
         let PC = PC+2;
         return;
     }
 }
-

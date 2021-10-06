@@ -1,6 +1,7 @@
 # symbols
-symbols = ['{','}','(',')','[',']','.',',',';','+','^',
-            '-','*','/','&',',','<','>','=','~','|']
+symbols = ['{','}','(',')','[',']','.',',',';','+',
+            '-','*','/','&',',','<','>','=','~','|',
+            '^','%', ]
 
 # keywords
 keywords = ['class','constructor','function',
@@ -19,17 +20,16 @@ subroutines = ['constructor', 'function', 'method']
 statements = ['let', 'if', 'while', 'do', 'return']
 
 # operators
-operators = ['+','-','*','/','&','|','<','>','=','^']
+operators = ['+','-','*','/','&','|','<','>','=','^','%']
 op_vm = {
     '+': 'add',
     '-': 'sub',
     '|': 'or',
     '=': 'eq',
-    # '*': 'call Math.multiply 2',
-    # '/': 'call Math.divide 2',
     '*': 'mul',
     '/': 'div',
     '^': 'xor',
+    '%': 'mod',
     '&gt;': 'gt',
     '&lt;': 'lt',
     '&amp;': 'and',

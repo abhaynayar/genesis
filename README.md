@@ -1,6 +1,8 @@
 # Genesis
 
-Retro OS written in Jack (from the [nand2tetris](https://nand2tetris.org) course).
+Minimal OS written in Jack (from the [nand2tetris](https://nand2tetris.org) course).
+
+![](images/ch8-demo.png	)
 
 ## Build
 
@@ -13,7 +15,9 @@ git clone https://github.com/abhaynayar/genesis
 ```
 
 For the compilation, translation and assembling of Jack programs, you need
-[Python](https://www.python.org/downloads/). For the CPU emulator, you will need
+[Python](https://www.python.org/downloads/).
+
+For the CPU emulator, you need
 [pygame](https://www.pygame.org/).
 
 Build and run the project using:
@@ -41,47 +45,45 @@ What the build script does:
 
 Applications
 
-- [ ] Text Editor
-	- Hold key for multi-input.
+- [ ] Text Editor.
 	- SHIFT key support.
-	- Backspace support.
-- [ ] Chip8 Interpreter
-- [ ] GUI Toolkit
+	- Fix backspace quirks.
+	- Hold key for multi-input.
+- [x] Chip8 Interpreter.
+- [ ] GUI Toolkit.
 
 Language
 
-- [ ] Declare variables anywhere.
 - [ ] For loops.
 - [ ] Hex numbers.
 - [ ] If-else ladders.
 - [ ] Shift operations.
 - [ ] Switch statements.
-- [x] XOR operations.
+- [ ] Declare variables anywhere.
 - [ ] Code coverage.
 - [ ] Error handling.
 - [ ] Inline assembly.
 - [ ] Coding style guide.
+- [x] Modulo operator.
+- [x] XOR operations.
 
 System
 
-- [x] C++ Emulator
-- [ ] File System
-- [ ] Sound Support
-- [ ] Timer Interrupts
-- [ ] Network Stack
-- [ ] Keyboard Interrupts
-- [x] Hardware-based CPU emulator
+- [ ] File System.
+- [x] C++ Emulator.
+- [ ] Sound Support.
+- [ ] Network Stack.
+- [ ] Timer Interrupts.
+- [ ] Shell Text Buffer.
+- [ ] Keyboard Interrupts.
+- [x] Hardware-based CPU emulator. (n2t-wasm)
 
 Misc.
 
 - [ ] Fonts with transparent backgrounds.
-- [ ] Terminate compiler and batch script on error.
+- [ ] Terminate compiler and shell script on error.
 - [ ] Check if Hack file is 64-bit before emulating.
 - [ ] Print string and newline in the same function.
 - [ ] Check if pixel is already set, if yes then don't update.
-- [ ] Implement special keyboard input. (backspace, control, etc.)
 - [ ] Output multiple files from assembler; concat them in the build script.
-
-Bugs
-
-- [x] Why does XOR only work with a space? => Was not added in JackType.symbols.
+- [x] Why does XOR only work with a space? => Was not added in JackType.symbols[].

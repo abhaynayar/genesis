@@ -366,7 +366,6 @@ def c_arithmetic(cmd):
         out += "A=A-1\n"
         out += "M=!M\n"
 
-    #heinz
     elif cmd == "mul":
         out += "@SP\n"
         out += "A=M\n"
@@ -394,6 +393,16 @@ def c_arithmetic(cmd):
         out += "D=M\n"
         out += "A=A-1\n"
         out += "M=M^D\n"
+        out += "@SP\n"
+        out += "M=M-1\n"
+    
+    elif cmd == "mod":
+        out += "@SP\n"
+        out += "A=M\n"
+        out += "A=A-1\n"
+        out += "D=M\n"
+        out += "A=A-1\n"
+        out += "M=M%D\n"
         out += "@SP\n"
         out += "M=M-1\n"
 
@@ -747,8 +756,8 @@ def main():
 
             asm_line = ""
 
-            if cmd in ["add", "sub", "neg", "and", "or", "not", "xor", "eq", \
-                    "gt", "lt", "mul", "div"]: #heinz
+            if cmd in ["add", "sub", "neg", "and", "or", "not", "eq", \
+                    "gt", "lt", "mul", "div", "xor", "mod"]:
                 asm_line = c_arithmetic(cmd)
             elif cmd == "push":     asm_line = c_push(cmd, arg1, arg2)
             elif cmd == "pop":      asm_line = c_pop(cmd, arg1, arg2)

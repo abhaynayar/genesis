@@ -175,6 +175,7 @@ class Emu:
         elif comp == 0x41: return self.rm*self.rd
         elif comp == 0x43: return int(self.rm/self.rd)
         elif comp == 0x44: return self.rm^self.rd
+        elif comp == 0x45: return self.rm%self.rd
         else: err("Invalid comp value: " + hex(comp))
     
     def dest_res(self, dest, comp_res):
