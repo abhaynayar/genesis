@@ -17,6 +17,7 @@ class Shell {
         do Output.printString("chip8");
         do Output.println();
         do Output.println();
+        do Chip8.main();
         
 		while (true) {
             let s = Keyboard.readLine("$ ");

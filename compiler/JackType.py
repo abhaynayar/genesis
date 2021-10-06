@@ -19,16 +19,17 @@ subroutines = ['constructor', 'function', 'method']
 statements = ['let', 'if', 'while', 'do', 'return']
 
 # operators
-operators = ['+','-','*','/','&','|','<','>','=']
+operators = ['+','-','*','/','&','|','<','>','=','^']
 op_vm = {
     '+': 'add',
     '-': 'sub',
     '|': 'or',
     '=': 'eq',
     # '*': 'call Math.multiply 2',
-    '*': 'mul', #heinz
     # '/': 'call Math.divide 2',
-    '/': 'div', #heinz
+    '*': 'mul',
+    '/': 'div',
+    '^': 'xor',
     '&gt;': 'gt',
     '&lt;': 'lt',
     '&amp;': 'and',

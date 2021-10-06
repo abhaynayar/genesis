@@ -56,7 +56,7 @@ class Screen {
 		return (num & (x-1));
 	}
 
-    /** Draws the (x, y) pixel. */
+    /** Draws the (x,y) pixel. */
     function void drawPixel(int x, int y) {
     	var int loc, temp, pixel;
     	let loc = SCREEN + (y*32) + (x/16);
@@ -70,9 +70,17 @@ class Screen {
     	return;
     }
 
+	/** Gets the (x,y) pixel. */
+	function boolean getPixel(int x, int y) {
+		var int loc, pixel, temp;
+		let loc = SCREEN + (y*32) + (x/16);
+		let pixel = (x & (16-1));
+		let temp = memory[loc] & bitmask[pixel];
+		return temp;
+	}
+
     /** Draws a line from pixel (x1, y1) to (x2, y2). */
     function void drawLine(int x1, int y1, int x2, int y2) {
-    	
 		var int adyMinusbdx, a, b, dx, dy, x, y;
     	
 		let adyMinusbdx = 0;

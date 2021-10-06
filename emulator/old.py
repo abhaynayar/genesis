@@ -171,9 +171,12 @@ class Emu:
         elif comp == 0x40: return self.rd&self.rm
         elif comp == 0x55: return self.rd|self.rm
 
-        #  Extended multiplication and division instructions:
+        #  Extended custom instructions:
         elif comp == 0x41: return self.rm*self.rd
         elif comp == 0x43: return int(self.rm/self.rd)
+        elif comp == 0x44:
+            print('hit xor')
+            return self.rm^self.rd
         else: err("Invalid comp value: " + hex(comp))
     
     def dest_res(self, dest, comp_res):

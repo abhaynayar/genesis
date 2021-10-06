@@ -5,6 +5,7 @@ import SymbolTable
 import JackTokenizer
 import xml.dom.minidom as xml
 
+DEBUG = True
 
 # NOTE:
 # - remove XML generation (at a later point in time, if possible)
@@ -155,6 +156,7 @@ class CompilationEngine:
             self.sym.define('this', type, 'ARG')
 
         # subroutineName '('
+        if DEBUG==True: print(self.currentSub)
         self.currentSub = self.tokens[self.i]
         ans += self.writeTag('identifier')
         ans += self.writeTag('symbol')
@@ -309,7 +311,10 @@ class CompilationEngine:
             # subroutineName
             ans += self.writeTag('identifier')
             ans += self.writeTag('symbol')
+            
             sn = self.tokens[self.i]
+            if DEBUG==True: print(sn)
+
             ans += self.writeTag('identifier') 
             ans += self.writeTag('symbol')
             ans += self.writeTag('expressionList', \
@@ -387,6 +392,8 @@ class CompilationEngine:
         ans = self.writeTag('keyword') # 'let'
         
         varName = self.tokens[self.i]
+        if DEBUG==True: print(varName)
+
         ans += self.writeTag('identifier') # varName
         kind = self.sym.kindOf(varName)
         index = self.sym.indexOf(varName)

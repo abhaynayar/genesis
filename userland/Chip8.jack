@@ -1,33 +1,65 @@
 class Chip8 {
-    static Array Memory;
-    static Array GFX;    // Screen
-    static Array V;      // Registers
-    static int PC;       // Program counter
+    // CPU:
     static int I;        // 12 bits wide
+    static int PC;       // Program counter
+    static Array V;      // Registers
+
+    // RAM:
+    static int SP;
+    static Array RAM;
+    static Array Stack;
+
+    // Timers:
+    static int delayTimer;
 
     function void init() {
-        let Memory = Array.new(4096);
-        let GFX = Array.new(32*64);
+        // CPU:
         let PC = 512;
+        let V = Array.new(16);
         let I = 0;
+
+        // RAM:
+        let RAM = Array.new(4096);
+        let Stack = Array.new(16);
         return;
+    }
+
+    function void push(int address) {
+        let Stack[SP] = address;
+        let SP = SP+1;
+        return;
+    }
+
+    function int pop() {
+        let SP = SP-1;
+        return Stack[SP];
     }
 
     function void main() {
+        var int opcode;
         do drawOutline();
+
         do init();
         do fillRom();
+
+        while (true) {
+            // Fetch:
+            let opcode = fetch();
+
+            // DEBUG:
+            // do Output.moveCursor(0,0);
+            // do Output.printString("         ");
+            // do Output.moveCursor(0,0);
+            // do Output.printInt(opcode);
+
+            // Decode & Execute:
+            do Chip8.execute(opcode);
+        }
         return;
     }
 
-    function void fillRom() {
-        var int i; let i=0;
-        while (i<144) {
-            //do Output.printInt(Disk.peek(i));
-            //do Output.printString(", ");
-            let Memory[i+512] = Disk.peek(i);
-            let i=i+1;
-        }
+    function int fetch() {
+        return ((RAM[PC+1]) | (RAM[PC]*256));
     }
 
     function int getVF() {
@@ -40,10 +72,300 @@ class Chip8 {
     }
 
     function void drawOutline() {
-        do Screen.drawLine(200,50,200+256,50); // top
-        do Screen.drawLine(200,50,200,50+128); // left
-        do Screen.drawLine(200+256,50,200+256,50+128); // right
-        do Screen.drawLine(200,50+128,200+256,50+128); // bottom
+        do Screen.drawLine(200,50,200+256,50);           // top
+        do Screen.drawLine(200,50,200,50+128);           // left
+        do Screen.drawLine(200+256,50,200+256,50+128);   // right
+        do Screen.drawLine(200,50+128,200+256,50+128);   // bottom
+        return;
+    }
+
+    function void fillRom() {
+        var int i; let i=0;
+        while (i<144) {
+            let RAM[i+512] = Disk.peek(i);
+            let i=i+1;
+        }
+    }
+
+    function void setGfx(int row, int column, boolean color) {
+        // TODO: check for bounds
+        do Screen.setColor(color);
+        do Screen.drawPixel(200+column, 50+row);
+        return;
+    }
+
+    function boolean getGfx(int row, int column) {
+        if (Screen.getPixel(200+column, 50+row)=0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function void execute(int opcode) {
+
+        var int upper;
+        var int lower;
+        var int rand;
+
+        var int X,Y,N,NN;
+        var int i,j,sum;
+
+        var boolean collision_flag;
+        var int switch_lower;
+        var int current_byte;
+        var int current_bit;
+        var int actual_bit;
+
+        // --- END OF DECLARATIONS --- //
+
+        //FIXME: rand should be a random number (0-255)
+        let rand=128;
+
+        let upper = (opcode & 61440) / 4096;
+        let lower = opcode & 4095;
+
+        //SWITCH:
+        if (upper=0) {
+            if (lower = 224) {
+                let i=0;
+                while (i<32) {
+                let j=0;
+                    while (j<64) {
+                        do Chip8.setGfx(i,j,false);
+                        let j=j+1;
+                    }
+                    let i=i+1;
+                }
+            }
+
+            if (lower=238) {
+                let PC = pop();
+            }
+
+            // Else: not necessary for most ROMs.
+            do Sys.err(2);
+        }
+
+        if (upper=1) {
+            // 1NNN: jump to NNN.
+            let PC = lower-2;
+        }
+
+        if (upper=2) {
+            // 2NNN: call subroutine at NNN.
+            do push(PC);
+            let PC = lower-2;
+            return;
+        }
+
+        if (upper=3) {
+            let X = (lower&3840)/256;
+            let NN = (lower&255);
+            if (~(V[X]=NN)) {
+                let PC = PC+2;
+            }
+        }
+
+        if (upper=4) {
+            let X = (lower&3840)/256;
+            let NN = (lower&255);
+            if (V[X]=NN) {
+                let PC = PC+2;
+            }
+        }
+
+        if (upper=5) {
+            let X = (lower&3840)/256;
+            let Y = (lower&240)/16;
+            if (V[X]=V[Y]) {
+                let PC = PC+2;
+            }
+        }
+        
+        if (upper=6) {
+            let X = (lower&3840)/256;
+            let NN = (lower&255);
+            let V[X] = NN;
+        }
+
+        if (upper=7) {
+            let X = (lower&3840)/256;
+            let NN = (lower&255);
+            let V[X] = (V[X]+NN) & 255;
+        }
+
+        if (upper=8) {
+            let X = (lower&3840)/256;
+            let Y = (lower&240)/16;
+            let switch_lower = (lower&15);
+
+            if (switch_lower=0) { let V[X] = V[Y]; }
+            if (switch_lower=1) { let V[X] = (V[X] | V[Y]); }
+            if (switch_lower=2) { let V[X] = (V[X] & V[Y]); }
+            if (switch_lower=3) { let V[X] = (V[X] ^ V[Y]); }
+            
+            if (switch_lower=4) {
+                let sum = V[X] + V[Y];
+                let V[X] = sum&255;
+
+                // Carry Flag:
+                if (sum>255) {
+                    let V[15] = 1;
+                } else {
+                    let V[15] = 0;
+                }
+            }
+
+            
+            if (switch_lower=5) {
+                let sum = V[X] - V[Y];
+                let V[X] = sum & 255;
+
+                // Borrow Flag:
+                if (sum<0) {
+                    let V[15] = 0;
+                } else {
+                    let V[15] = 1;
+                }
+            }
+
+            if (switch_lower=6) {
+                let V[15] = V[X]&1;
+                let V[X] = V[X]/2;
+            }
+
+            if (switch_lower=7) {
+                let sum = V[Y] - V[X];
+                let V[X] = sum & 255;
+
+                // Borrow Flag:
+                if (sum<0) {
+                    let V[15] = 0;
+                } else {
+                    let V[15] = 1;
+                }
+            }
+
+            if (switch_lower=14) {
+                let V[15] = (V[X]/128)&1;
+                let V[X] = V[X]*2;
+            }
+        }
+
+        if (upper=9) {
+            let X = (lower&3840)/256;
+            let Y = (lower&240)/16;
+
+            if (~(V[X]=V[Y])) {
+                let PC = (PC+2);
+            }
+        }
+
+
+        if (upper=10) {
+            let I=lower;
+        }
+
+        if (upper=11) {
+            let PC = V[0] + lower - 2;
+        }
+
+        if (upper=12) {
+            let X = (lower&3840)/256;
+            let NN = (lower&255);
+            let V[X] = (rand&NN);
+        }
+
+        if (upper=13) {
+            let X = (lower&3840)/256;
+            let Y = (lower&240)/16;
+            let N = (lower&15);
+            let collision_flag = false;
+
+            let j=0;
+            while (j<N) {
+                let current_byte = RAM[I+j];
+                let i=0;
+                while (i<8) {
+                    let current_bit = (current_byte/Math.twoToThe(7-i)) & 1;
+                    let actual_bit = Chip8.getGfx(V[Y]+j, V[X]+i);
+            
+                    if ((current_bit=1) & (current_bit=actual_bit)) {
+                        let collision_flag = true;
+                    }
+
+                    do Chip8.setGfx(V[Y]+j, V[X]+i, true); //actual_bit^current_bit);
+                    let i=i+1;
+                }
+                let j=j+1;
+            }
+
+            if (collision_flag=1) {
+                let V[15] = 1;
+            } else {
+                let V[15] = 0;
+            }
+        }
+
+
+        if (upper=14) {
+            // TODO: Don't need keypress stuff right now.
+            return;
+        }
+
+        if (upper=15) {
+            let X = (lower&3840)/512;
+/*
+            // SWITCH(lower):
+            if (lower=7) {
+                //TODO
+            }
+
+            if (lower=10) {
+                //TODO
+            }
+
+            if (lower=21) {
+                //TODO
+            }
+
+            if (lower=24) {
+                //TODO
+            }
+*/
+            if (lower=30) {
+                let I = I+V[X];
+            }
+
+            if (lower=41) {
+                let I = V[X]*5;
+            }
+/*
+            if (lower=51) {
+                //TODO
+            }
+*/
+            if (lower=85) {
+                let i=0;
+                while (i<16) {
+                    let RAM[I+i] = V[i];
+                    let i=i+1;
+                }
+            }
+
+            if (lower=101) {
+                let i=0;
+                while (i<16) {
+                    let V[i] = RAM[I+i];
+                }
+            }
+
+            // Else: we halt.
+            do Sys.err(1);
+        }
+
+        let PC = PC+2;
         return;
     }
 }

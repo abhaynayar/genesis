@@ -34,7 +34,6 @@ class Math {
         if (x<0) {
             return -x;
         }
-        
         return x;
     }
 
@@ -56,7 +55,6 @@ class Math {
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
-        
         var int low, high, med;
         let high = 182;
         let low = 0;

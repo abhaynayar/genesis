@@ -39,8 +39,6 @@ What the build script does:
 
 ## Todo
 
-**I would love contributions towards making the emulator faster.**
-
 Applications
 
 - [ ] Text Editor
@@ -52,13 +50,17 @@ Applications
 
 Language
 
-- [ ] Hex numbers
-- [x] XOR operations
-- [ ] Code coverage
-- [ ] Error handling
-- [ ] Shift operations
-- [ ] Inline assembly
-- [ ] Coding style guide
+- [ ] Declare variables anywhere.
+- [ ] For loops.
+- [ ] Hex numbers.
+- [ ] If-else ladders.
+- [ ] Shift operations.
+- [ ] Switch statements.
+- [x] XOR operations.
+- [ ] Code coverage.
+- [ ] Error handling.
+- [ ] Inline assembly.
+- [ ] Coding style guide.
 
 System
 
