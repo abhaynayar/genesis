@@ -1,8 +1,8 @@
 # Genesis
 
-Minimal OS written in Jack (from the [nand2tetris](https://nand2tetris.org) course).
+Minimal OS written in Jack.
 
-![](images/ch8-demo.png	)
+![](images/ch8-demo.png)
 
 ## Build
 
