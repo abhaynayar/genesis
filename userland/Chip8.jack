@@ -28,7 +28,7 @@ class Chip8 {
         let Stack = Array.new(16);
 
         // Outline:
-        let bx = 350;
+        let bx = 50;
         let by = 50;
         return;
     }

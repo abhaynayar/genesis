@@ -10,6 +10,7 @@ class Shell {
     	var String s;
     	var boolean ok;
 
+/*
         do Output.printString("Available commands: ");
         do Output.println();
 
@@ -19,6 +20,7 @@ class Shell {
         do Output.printString("chip8");
         do Output.println();
         do Output.println();
+*/
         
 		while (true) {
             let s = Keyboard.readLine("$ ");

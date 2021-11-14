@@ -77,9 +77,10 @@ class Keyboard {
             // backSpace
             if (c = 129) {
                 do s.eraseLastChar();
+                do Output.backSpace();
             }
 
-            if (~(c=128) | ~(c=129)) {
+            if (~(c=128) & ~(c=129)) {
                 do Output.printChar(c);
                 do s.appendChar(c);
             }

@@ -297,6 +297,7 @@ class Output {
     /** Moves the cursor one column back. */
     function void backSpace() {
         do Output.moveCursor(cy, cx-1);
+        do Output.printChar(1);
         return;
     }
 }
