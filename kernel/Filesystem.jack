@@ -1,9 +1,434 @@
-class Filesystem {
-    function void init() {
-        var int diskChar;
-        let diskChar = Disk.peek(0);
-        //do Output.printInt(diskChar);
-        //do Output.println();
-        return;
-    }
+/*
+ *                     jack public domain compiler
+ *
+ *                      15 may MMXXI PUBLIC DOMAIN
+ *           The author disclaims copyright to this source code.
+ *
+ *
+ */
+
+
+
+class File {
+	field int fd;
+	field boolean is_write;
+	field Array buffer;
+	field String name;
+	
+	constructor File new(String path, boolean writing) {
+		var int l;
+		let fd = -1;
+		let is_write = writing;
+		let l = path.length();
+		if (l < 0) {
+			do Output.printString("Negative String length.");
+			do Sys.error(-1);
+			return this;
+		}
+		let name = path.copy();
+		return this;
+	}
+
+	method void dispose() {
+		var int f;
+		let f = fd;
+		if (name) {
+			do name.dispose();
+		}
+		if (fd < 0) {
+			do Memory.deAlloc(this);
+			return;
+		}
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method String getName() {
+		return name;
+	}
+
+	method boolean isdir() {
+		var int l;
+		var Array s;
+		var int f;
+		var Bytes b;
+		
+		let l = name.length();
+		if (l < 1) {
+			return false;
+		}
+		let b = Bytes.new(256);
+		do b.setStringToNative(name);
+		let s = b.getStringNativePointer();
+		let f = 0;
+		do b.dispose();
+		return f;
+	}
+
+
+
+
+	method boolean open() {
+		var int l;
+		var Array m, s;
+		var int f;
+		var boolean writing;
+		var Bytes b;
+
+		if (fd > -1) {
+			return;
+		}
+		let writing = is_write;
+		let l = name.length();
+		if (l < 1) {
+			return false;
+		}
+		if (isdir()) {
+			return false;
+		}
+		let b = Bytes.new(256);
+		do b.setStringToNative(name);
+		let s = b.getStringNativePointer();
+		let f = -1;
+		let fd = f;
+		do b.dispose();
+		return true;
+	}
+
+
+	method int readByte() {
+		var int b;
+		var int f;
+		let f = fd;
+		if (f < 0) {
+			do open();
+			let f = fd;
+			if (f < 0) {
+				return -1;
+			}
+		}
+		let b = 0;
+		return b;
+	}
+
+	method int seek(int position) {
+		var int b;
+		var int f;
+		var int p;
+		let f = fd;
+		let p = position;
+		if (f < 0) {
+			do open();
+			let f = fd;
+			if (f < 0) {
+				return -1;
+			}
+		}
+		return b;
+	}
+
+
+	
+	method int writeByte(int data) {
+		var int r;
+		var int f;
+		var int b;
+		let b = data;
+		if (fd < 0) {
+			do open();
+			if (fd < 0) {
+				return -1;
+			}	
+		}
+		let f = fd;
+		return r;
+	}
+
+	method int writeString(String s) {
+		var int i, l;
+		var char c;
+		let i = 0;
+		let l = s.length();
+		while (i < l) {
+			let c = s.charAt(i);
+			do writeUtf8(c);
+			let i = i + 1;
+		}
+		return i;
+	}
+
+	method String readLine(String buff) {
+		var char c;
+		let c = readUtf8();
+		if (c = 0) {
+			return null;
+		}
+		do buff.setCharAt(0, 0);
+		while ((c > 0)) {
+			let buff = buff.appendChar(c);
+			if (c = 10) {
+				let c = 0;
+			} else {
+				let c = readUtf8();
+			}
+		}	
+		return buff;
+	}
+
+	// FSS-UTF
+	method char readUtf8() {	
+		var int c, b;
+		let c = readByte();
+		if ((c < 1) | (c > 255)) {
+			return 0;
+		}
+		if (c < 128) {
+			return c; // U+0000 U+007F
+		} else { if (c < 192) { // 128+64
+			return c; // Error unexpected trailing byte
+		} else { if (c < 224) { // b110xxxxx 128+64+32
+			let c = c & 31; 
+			let b = readByte() & 63; // b10xxxxxx 63
+			let c = b + (c * 64); 
+			return c; // U+0080 U+07FF
+		} else { if (c < 240) { // b1110xxxx 128+64+32+16
+			let c = c & 15; 
+			let b = readByte() & 63; 
+			let c = (b * 64) + (c * 4096); 
+			let b = readByte() & 63; 
+			let c = c + b; 
+			return c; // U+0800 U+FFFF
+		} else { if (c < 248) { // b11110xxx 128+64+32+16+8
+			let c = c & 7; 
+			let b = readByte() & 63; 
+			let c = (b * 4096) + (c * 262144); 
+			let b = readByte() & 63; 
+			let c = (b * 64) + c; 
+			let b = readByte() & 63; 
+			let c = c + b; 
+			return c; // U+10000 U+1FFFFF
+		} else { if (c < 252) { // b111110xx 128+64+32+16+8+4
+			let c = c & 3; 
+			let b = readByte() & 63; 
+			let c = (b * 262144) + (c * 16777216); 
+			let b = readByte() & 63; 
+			let c = (b * 4096) + c; 
+			let b = readByte() & 63; 
+			let c = (b * 64) + c; 
+			let b = readByte() & 63; 
+			let c = c + b; 
+			return c; // U+200000 U+3FFFFFF
+		} else {  // b111111xx
+			let c = c & 3; 
+			let b = readByte() & 63; 
+			let c = (b * 16777216) | (c * 1073741824);
+			let b = readByte() & 63; 
+			let c = (b * 262144) | c; 
+			let b = readByte() & 63; 
+			let c = (b * 4096) | c; 
+			let b = readByte() & 63; 
+			let c = (b * 64) | c; 
+			let b = readByte() & 63; 
+			let c = c | b; 
+			return c; // U+4000000 U+FFFFFFFF
+		}}}}}}
+		return c;
+	}
+
+	// https://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt
+	method int writeUtf8(char data) {
+		if (data & 3221225472) { // 2^30 + 2^31
+			do writeByte(((data / 1073741824) & 3) | 252); // 2^30
+			do writeByte(((data / 16777216) & 63) | 128); // 2^24
+			do writeByte(((data / 262144) & 63) | 128);   // 2^18
+			do writeByte(((data / 4096) & 63) | 128);    // 2^12
+			do writeByte(((data / 64) & 63) | 128);     // 2^6
+			do writeByte(((data) & 63) | 128);
+		} else { if (data > 2097152) {
+			do writeByte(((data / 16777216) & 3) | 248);
+			do writeByte(((data / 262144) & 63) | 128);
+			do writeByte(((data / 4096) & 63) | 128);
+			do writeByte(((data / 64) & 63) | 128);
+			do writeByte(((data) & 63) | 128);
+		} else { if (data > 65535) {
+			do writeByte(((data / 262144) & 7) | 240);
+			do writeByte(((data / 4096) & 63) | 128);
+			do writeByte(((data / 64) & 63) | 128);
+			do writeByte(((data) & 63) | 128);
+		} else { if (data > 2047) {
+			do writeByte(((data / 4096) & 15) | 224);
+			do writeByte(((data / 64) & 63) | 128);
+			do writeByte(((data) & 63) | 128);
+		} else { if (data > 127) {
+			do writeByte(((data / 64) & 31) | 192);
+			do writeByte(((data) & 63) | 128);
+		} else { 
+			do writeByte(((data) & 127));
+		}}}}}
+		return 0;
+	}
+	
+	// little endian
+	method int writeInt16(int d) {
+		do writeByte(d & 255); 
+		return writeByte((d / 256) & 255);
+	}
+
+	method int writeInt32(int d) {
+		do writeInt16(d);
+		return writeInt16(d / 65536);
+	}
+
+	method int writeInt64(int d) {
+		do writeInt32(d);
+		return writeInt32((d / 2147483648) / 2);
+	}
+
+	method int readInt16() {
+		var int d;
+		let d = readByte();
+		let d =  d + (readByte() * 256);
+		return d;
+	}
+
+	method int readInt32() {
+		var int d;
+		let d = readInt16();
+		let d =  d + (readInt16() * 65536);
+		return d;
+	}
+
+	method int readInt64() {
+		var int d;
+		let d = readInt32();
+		let d =  d + ((readInt32() * 2147483648) * 2);
+		return d;
+	}
+
+	method boolean remove() {
+		var int l, m;
+		var  Bytes b;
+		var  Array s;
+//#py 	n = ""
+		if (name = null) {
+			return false;
+		}
+		let l =name.length();
+		if (l < 1) {
+			return false;
+		}
+		let b = Bytes.new(256);
+		do b.setStringToNative(name);
+		let s = b.getStringNativePointer();
+		if (isdir()=false) {
+		} else  {
+		
+		} 
+		do b.dispose();
+		return (m=0);
+	}
+
+	method boolean mkdir() {
+		var int l, m;
+		var Array s;
+		var Bytes b;
+		if (name = null) {
+			return false;
+		}
+		let l =name.length();
+		if (l < 1) {
+			return false;
+		}
+		let b = Bytes.new(256);
+		do b.setStringToNative(name);
+		let s = b.getStringNativePointer();
+		return (m=0);
+	}
+
+	method Buffer list() {
+		var int i, l;
+		var Buffer b;
+		var String s, na;
+		var Array n, a;
+		var Bytes str;
+		if (name = null) {
+			return null;
+		}
+		let l =name.length();
+		if (l < 1) {
+			return null;
+		}
+		let na = name.copy();
+		if ((na.charAt(l-1) = 47)=false) {
+			let na = na.appendChar(47);
+		}
+		let str = Bytes.new(256);
+		do str.setStringToNative(na);
+		let n = str.getStringNativePointer();
+		
+		let b = Buffer.new(10, null);
+		let i = 0;
+ 	i = i + 1;
+	l = wcslen((wchar_t*)n);
+	if (((wchar_t*)n)[l - 1] != L'*') {
+		Bytes__appendNativeChar(str, L'*');
+ 		n = Bytes__getStringNativePointer(str);
+ 	}
+	for (i = 0; i < l; i++) {
+		if (((wchar_t*)n)[i] == '/') {
+			((wchar_t*)n)[i] = '\\';
+ 		}
+ 	}
+ 		
+ 	if((File__hFind = FindFirstFileW((LPCWSTR)n, &File__FindFileData))
+ 	 	!= INVALID_HANDLE_VALUE)
+ 	{
+ 		do {
+         		a = (var)File__FindFileData.cFileName;
+			if (((wchar_t*)a)[0] == L'.' && 
+ 			 	(((((wchar_t*)a)[1] == L'.') && 
+ 					(((wchar_t*)a)[2] == 0))
+ 					|| (((wchar_t*)a)[1] == 0)))
+ 			{} else {
+ 				s=String__copy(na);
+ 				s=String__appendFromNative(s, a);
+ 				if (File__FindFileData.dwFileAttributes & 
+ 					FILE_ATTRIBUTE_DIRECTORY) { 
+ 					s=String__appendChar(s, 47); 
+ 				}
+ 				Buffer__append(b, s);
+			}
+ 			i = i + 1;
+		} while(FindNextFileW(File__hFind, &File__FindFileData));
+ 		FindClose(File__hFind);
+	}
+	
+ 	//n = n * sizeof(var);
+ 	//printf("OPNE %s\n", n);
+ 	if((File__dir = opendir((char*)n)) != 0){
+    		while((File__dp = readdir(File__dir)) != 0){
+ 			a = (var)File__dp->d_name;
+ 			if (((char*)a)[0] == '.' && 
+ 			 	(((((char*)a)[1] == '.') && (((char*)a)[2] == 0))
+ 					|| (((char*)a)[1] == 0)))
+ 			{} else {
+ 				s=String__copy(na);
+ 				s=String__appendFromNative(s, a);
+ 				
+ 				if (File__dp->d_type == DT_DIR) {
+ 					s=String__appendChar(s, 47); 
+ 				}
+ 				Buffer__append(b, s);
+ 			}
+ 			i = i + 1;
+     		}
+     		closedir(File__dir);
+ 	}
+
+
+		do str.dispose();
+		do na.dispose();
+		return b;
+	}
 }
+
